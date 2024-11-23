@@ -15,7 +15,7 @@ const Filter = () => {
   return (
     <div className="rounded-md">
       {filterData.map((item, i) => (
-        <div className="collapse collapse-arrow bg-white rounded-md border-b-2">
+        <div key={i} className="collapse collapse-arrow bg-white rounded-md border-b-2">
           <input type="radio" name="my-accordion-2" defaultChecked />
           <div className="collapse-title text-md font-medium">{item.title}</div>
           <div className="collapse-content">

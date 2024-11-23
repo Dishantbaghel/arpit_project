@@ -82,8 +82,7 @@ const Dashboard = () => {
       onSubmit: async (values) => {
         console.log("Form data:", values);
 
-        const url =
-          `http://localhost:8080/data/records?informationOf=export&dataType=raw data&duration=20/03/2022-15/11/2022&chapter=30&searchType=product name&searchValue=Sorafenib`;
+        const url = `http://localhost:8080/data/records?informationOf=export&dataType=raw data&duration=20/03/2022-15/11/2022&chapter=30&searchType=product name&searchValue=Sorafenib`;
         try {
           const response = await axios.get(url);
           setApiData(response.data.data);
@@ -372,7 +371,7 @@ const Dashboard = () => {
             {/* -------------------------------------------ALL GRAPHS----------------------------------------- */}
             <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {Array.from({ length: 8 }).map((_, index) => (
-                <div className="card bg-base-100 w-full border-2">
+                <div key={index} className="card bg-base-100 w-full border-2">
                   <div className="p-3">
                     <BarChart />
                   </div>
