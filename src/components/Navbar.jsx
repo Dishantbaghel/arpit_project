@@ -1,9 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import React from "react";
+import { usePathname } from "next/navigation";
 
 const Navbar = () => {
+  const pathname = usePathname();
+
   return (
-    <div className="navbar bg-blue-900 text-white py-1">
+    <div className="navbar bg-theme_color text-white py-1">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -49,29 +54,48 @@ const Navbar = () => {
           LOGO
         </Link>
       </div>
+
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1">
+        <ul className="flex gap-10 px-1">
           <li>
-            <Link href="/">Home</Link>
+            <Link
+              href="/"
+              className={`nav-link ${pathname === "/" ? "active" : ""}`}
+            >
+              Home
+            </Link>
           </li>
           <li>
-            <details>
-              <summary>Parent</summary>
-              <ul className="p-2">
-                <li>
-                  <a>Submenu 1</a>
-                </li>
-                <li>
-                  <a>Submenu 2</a>
-                </li>
-              </ul>
-            </details>
+            <Link
+              href="/dashboard"
+              className={`nav-link ${
+                pathname === "/dashboard" ? "active" : ""
+              }`}
+            >
+              Dashboard
+            </Link>
           </li>
           <li>
-            <Link href="/dashboard">Dashboard</Link>
+            <Link
+              href="/about-us"
+              className={`nav-link ${pathname === "/about-us" ? "active" : ""}`}
+            >
+              About Us
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/contact-us"
+              className={`nav-link ${
+                pathname === "/contact-us" ? "active" : ""
+              }`}
+            >
+              Contact Us
+            </Link>
           </li>
         </ul>
       </div>
+
       <div className="navbar-end flex gap-8 ">
         {/* =========================THEME BUTTON============================= */}
         {/* <div>
@@ -101,6 +125,10 @@ const Navbar = () => {
             </svg>
           </label>
         </div> */}
+
+        <Link href="/admin-dashboard" className="btn btn-sm">
+          Admin
+        </Link>
         <Link href="/login" className="btn btn-sm">
           Sign In
         </Link>

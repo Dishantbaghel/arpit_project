@@ -127,17 +127,28 @@ const data = [
   },
 ];
 
-const Table = () => {
+const Table = ({ apidata }) => {
+  console.log("API DATA=============", apidata);
   const columns = useMemo(
     () => [
       {
-        accessorKey: "billDate",
+        accessorKey: "shippingBillDate",
         header: "S.Bill_Date",
         size: 150,
       },
       {
-        accessorKey: "product",
+        accessorKey: "H_S_Code",
+        header: "HS Code",
+        size: 150,
+      },
+      {
+        accessorKey: "productName",
         header: "Product",
+        size: 150,
+      },
+      {
+        accessorKey: "productDescription",
+        header: "Product Description",
         size: 150,
       },
       {
@@ -151,7 +162,7 @@ const Table = () => {
         size: 150,
       },
       {
-        accessorKey: "indianPorts",
+        accessorKey: "portOfOrigin",
         header: "Indian_Ports",
         size: 150,
       },
@@ -166,18 +177,13 @@ const Table = () => {
         size: 150,
       },
       {
-        accessorKey: "categorisation",
-        header: "Categorisation",
+        accessorKey: "currency",
+        header: "Currency",
         size: 150,
       },
       {
-        accessorKey: "foreignPort",
-        header: "Foreign_Port",
-        size: 150,
-      },
-      {
-        accessorKey: "buyingCountry",
-        header: "Buying_Country",
+        accessorKey: "portOfDeparture",
+        header: "Foreign Company",
         size: 150,
       },
     ],
@@ -186,7 +192,7 @@ const Table = () => {
 
   const table = useMaterialReactTable({
     columns,
-    data, //data must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
+    data: apidata,
   });
 
   return <MaterialReactTable table={table} />;

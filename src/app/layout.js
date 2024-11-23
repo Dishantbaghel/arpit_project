@@ -1,7 +1,8 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import NavbarFooterWrapper from "@/components/NavbarFooterWrapper";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,13 +14,24 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" data-theme="light">
-      <body 
-      // className={inter.className}
-      className="flex flex-col justify-between min-h-[100vh]"
+      <body
+        // className={inter.className}
+        className="flex flex-col justify-between min-h-[100vh]"
       >
-        <Navbar />
-        {children}
-        <Footer />
+        <NavbarFooterWrapper>{children}</NavbarFooterWrapper>
+        {/* Add ToastContainer here */}
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </body>
     </html>
   );

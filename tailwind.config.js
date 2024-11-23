@@ -12,6 +12,11 @@ module.exports = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      colors: {
+        theme_color: "#1E3A8A", // Example primary color
+        // secondary: '#9333EA',
+        // accent: '#FBBF24',
+      },
     },
   },
   plugins: [require("daisyui")],
