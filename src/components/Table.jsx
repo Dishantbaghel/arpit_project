@@ -132,12 +132,12 @@ const Table = ({ apidata }) => {
   const columns = useMemo(
     () => [
       {
-        accessorKey: "shippingBillDate",
+        accessorKey: "dateOfShipment",
         header: "S.Bill_Date",
         size: 150,
       },
       {
-        accessorKey: "H_S_Code",
+        accessorKey: "HS_Code",
         header: "HS Code",
         size: 150,
       },
@@ -157,12 +157,12 @@ const Table = ({ apidata }) => {
         size: 200,
       },
       {
-        accessorKey: "quantityUnit",
+        accessorKey: "quantityUnits",
         header: "Quantity_Unit",
         size: 150,
       },
       {
-        accessorKey: "portOfOrigin",
+        accessorKey: "indianPort",
         header: "Indian_Ports",
         size: 150,
       },
@@ -182,8 +182,13 @@ const Table = ({ apidata }) => {
         size: 150,
       },
       {
-        accessorKey: "portOfDeparture",
+        accessorKey: "foreignCompany",
         header: "Foreign Company",
+        size: 150,
+      },
+      {
+        accessorKey: "foreignCountry",
+        header: "Foreign Country",
         size: 150,
       },
     ],

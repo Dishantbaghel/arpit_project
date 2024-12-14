@@ -19,7 +19,6 @@ export default function RootLayout({ children }) {
         className="flex flex-col justify-between min-h-[100vh]"
       >
         <NavbarFooterWrapper>{children}</NavbarFooterWrapper>
-        {/* Add ToastContainer here */}
         <ToastContainer
           position="top-right"
           autoClose={5000}

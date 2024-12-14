@@ -2,6 +2,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { IoCloudUploadOutline } from "react-icons/io5";
 
 export default function ImportData() {
   const [file, setFile] = useState(null);
@@ -88,35 +89,21 @@ export default function ImportData() {
   };
 
   return (
-    <div className="flex items-center justify-around gap-20 min-h-[calc(100vh-120px)] p-4">
+    <div className="w-full flex flex-col sm:flex-row md:flex-row lg:flex-row xl:flex-row justify-between gap-10 min-h-[calc(100vh-120px)]">
       {/* Export File Upload */}
       {loadingExport ? (
         <span className="loading loading-spinner loading-lg"></span>
       ) : (
-        <div className="flex flex-col items-center justify-center">
+        <div className="w-full flex flex-col items-center">
           <h1 className="text-2xl font-bold mb-6">Upload Export File</h1>
 
-          <div className="w-full max-w-md">
+          <div className="w-full">
             <label
               htmlFor="export-file-input"
-              className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+              className="flex flex-col items-center p-8 justify-center w-full border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
             >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg
-                  aria-hidden="true"
-                  className="w-8 h-8 mb-3 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M16 16l-4-4m0 0l-4 4m4-4v12M12 8c1.105 0 2-.895 2-2 0-1.105-.895-2-2-2s-2 .895-2 2c0 1.105.895 2 2 2z"
-                  ></path>
-                </svg>
+                <IoCloudUploadOutline size={60} />
                 <p className="mb-2 text-sm text-gray-500">
                   <span className="font-semibold">Click to upload</span> or drag
                   and drop
@@ -149,30 +136,16 @@ export default function ImportData() {
       {loadingImport ? (
         <span className="loading loading-spinner loading-lg"></span>
       ) : (
-        <div className="flex flex-col items-center justify-center">
+        <div className="w-full flex flex-col items-center">
           <h1 className="text-2xl font-bold mb-6">Upload Import File</h1>
 
-          <div className="w-full max-w-md">
+          <div className="w-full">
             <label
               htmlFor="import-file-input"
-              className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+              className="flex flex-col items-center p-8 justify-center w-full border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
             >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg
-                  aria-hidden="true"
-                  className="w-8 h-8 mb-3 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M16 16l-4-4m0 0l-4 4m4-4v12M12 8c1.105 0 2-.895 2-2 0-1.105-.895-2-2-2s-2 .895-2 2c0 1.105.895 2 2 2z"
-                  ></path>
-                </svg>
+                <IoCloudUploadOutline size={60} />
                 <p className="mb-2 text-sm text-gray-500">
                   <span className="font-semibold">Click to upload</span> or drag
                   and drop
