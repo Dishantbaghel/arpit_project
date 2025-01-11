@@ -1,8 +1,8 @@
-"use client"
-import {useEffect} from "react";
-import {useState} from "react";
+"use client";
+import { useEffect } from "react";
+import { useState } from "react";
 // import CurrencyDropdown from "./dropdown";
-import {HiArrowsRightLeft} from "react-icons/hi2";
+import { HiArrowsRightLeft } from "react-icons/hi2";
 import CurrencyDropdown from "./CurrencyDropdown";
 
 const CurrencyConverter = () => {
