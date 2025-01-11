@@ -93,6 +93,34 @@ const Navbar = () => {
               Contact Us
             </Link>
           </li>
+          <li>
+            <Link
+              href="/converter"
+              className={`nav-link ${
+                pathname === "/converter" ? "active" : ""
+              }`}
+            >
+              Converter
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/hsCode"
+              className={`nav-link ${pathname === "/hsCode" ? "active" : ""}`}
+            >
+              HS Code
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/indian-ports"
+              className={`nav-link ${
+                pathname === "/indian-ports" ? "active" : ""
+              }`}
+            >
+              Indian Ports
+            </Link>
+          </li>
         </ul>
       </div>
 

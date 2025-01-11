@@ -3,6 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { IoCloudUploadOutline } from "react-icons/io5";
+import axiosInstance from "@/utils/axiosInstance";
 
 export default function ImportData() {
   const [file, setFile] = useState(null);
@@ -29,8 +30,10 @@ export default function ImportData() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await axios.post(
-        "http://localhost:8080/data/upload?type=export",
+      const sessionId = localStorage.getItem("sessionId");
+
+      const response = await axiosInstance.post(
+        `/data/upload?type=export&session=${sessionId}`,
         formData,
         {
           headers: {
@@ -65,8 +68,8 @@ export default function ImportData() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await axios.post(
-        "http://localhost:8080/data/upload?type=import",
+      const response = await axiosInstance.post(
+        "/data/upload?type=import",
         formData,
         {
           headers: {

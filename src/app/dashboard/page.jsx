@@ -1,12 +1,7 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { CiSearch } from "react-icons/ci";
-import { FaFolderOpen } from "react-icons/fa";
-
-import { FaFileCircleMinus } from "react-icons/fa6";
-import { CiStar } from "react-icons/ci";
-import { FaSave } from "react-icons/fa";
 
 import { RxSize } from "react-icons/rx";
 import { IoBarChart } from "react-icons/io5";
@@ -16,12 +11,6 @@ import TabsComponent from "@/components/Tabs";
 import BarChart from "@/components/Barchart";
 import Accordion from "@/components/Accordion";
 import Table from "@/components/Table";
-
-// import Accordion from "../../components/Accordion";
-// import TabsComponent from "../../components/Tabs";
-// import Modal from "../../components/Modal";
-// import BarChart from "../../components/Barchart";
-
 import { themeChange } from "theme-change";
 import AutocompleteWithBadge from "@/components/test";
 import CheckboxesTags from "@/components/CheckboxDropdown";
@@ -66,6 +55,8 @@ import VerticalTabs from "@/components/VerticalTabs";
 import debounce from "lodash/debounce";
 import { toast } from "react-toastify";
 import Datepicker from "react-tailwindcss-datepicker";
+import axiosInstance from "@/utils/axiosInstance";
+import { format } from "date-fns";
 
 const chapters = [
   { title: "28" },
@@ -75,11 +66,6 @@ const chapters = [
   { title: "32" },
   { title: "33" },
   { title: "34" },
-];
-
-const top100Films = [
-  { title: "Sorafenib", year: 1994 },
-  { title: "Benzyl Alcohol", year: 1994 },
 ];
 
 const searchOptions = [
@@ -118,22 +104,50 @@ const Dashboard = () => {
     initialValues: {
       info: "import",
       dataType: "",
-      startDate: "",
-      endDate: "",
+      // startDate: "",
+      // endDate: "",
+      duration: "",
       chapter: "",
       searchType: "",
       searchValue: "",
     },
     // validationSchema: validationSchema,
     onSubmit: async (values) => {
-      console.log("Form data:", values);
+      console.log("VALUES====", values);
+      const sessionId = localStorage.getItem("sessionId");
 
-      const url = `http://localhost:8080/data/records?informationOf=${values.info}&dataType=${values.dataType}&duration=20/03/2022-15/11/2022&chapter=${values.chapter}&searchType=${values.searchType}&searchValue=${values.searchValue}`;
-      // const url = `http://localhost:8080/data/records?informationOf=export&dataType=cleaned data&duration=20/03/2022-15/11/2022&chapter=30&searchType=product name&searchValue=Sorafenib,Tacrolimus`;
+      const url = `/data/records?informationOf=${values.info}&dataType=${values.dataType}&duration=${values.duration}&chapter=${values.chapter}&searchType=${values.searchType}&searchValue=${values.searchValue}&session=${sessionId}`;
+      // const url = `/data/records?informationOf=export&dataType=cleaned data&duration=20/03/2022-15/11/2022&chapter=30&searchType=product name&searchValue=Sorafenib,Tacrolimus`;
       try {
-        const response = await axios.get(url);
+        const response = await axiosInstance.get(url);
         setApiData(response.data.data);
-        console.log("DATA=====", response.data);
+
+        const { metrics } = response.data.data || {};
+        if (metrics) {
+          // Transform each array in metrics into graph-ready data
+          const dynamicGraphsData = Object.entries(metrics).map(
+            ([key, value]) => {
+              const data = value.map((item) => ({
+                label:
+                  item.buyer ||
+                  item.supplier ||
+                  item.buyerCountry ||
+                  item.portOfOrigin ||
+                  "Unknown",
+                value: item.total,
+              }));
+              return {
+                key,
+                data,
+                label: key.replace(/([A-Z])/g, " $1").trim(),
+              };
+            }
+          );
+
+          setGraphsData(dynamicGraphsData);
+        } else {
+          console.error("Metrics data is missing in API response.");
+        }
       } catch (err) {
         console.log("error====", err);
         setError(err.message);
@@ -169,33 +183,32 @@ const Dashboard = () => {
   //   fetchData();
   // }, []);
 
-  // =========================handle change====================
-
-  // const handleSearch = async () => {
-  //   const url =
-  //     "http://localhost:8080/data/suggestion?informationOf=export&chapter=30&searchType=product description&suggestion=SULPHONE";
-  //   try {
-  //     const response = await axios.get(url);
-  //     setApiData(response.data.data);
-  //     console.log("DATA=====", response.data);
-  //   } catch (err) {
-  //     console.log("error====", err);
-  //     setError(err.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const [open, setOpen] = useState(false); // For managing the dropdown state
   const [searchApiData, setSearchApiData] = useState([]); // Renamed to searchApiData
   const [searchLoading, setSearchLoading] = useState(false);
 
-  const fetchSuggestions = async (query, setSearchApiData, setError) => {
-    const url = `http://localhost:8080/data/suggestion?informationOf=export&chapter=30&searchType=product%20description&suggestion=${encodeURIComponent(
+  const valuesRef = useRef(values);
+
+  // Update the ref whenever `values` change
+  useEffect(() => {
+    valuesRef.current = values;
+  }, [values]);
+
+  const fetchSuggestions = async (
+    query,
+    currentValues,
+    setSearchApiData,
+    setError
+  ) => {
+    console.log("VALUES======", currentValues);
+    const sessionId = localStorage.getItem("sessionId");
+    const url = `/data/suggestion?informationOf=${currentValues.info}&chapter=${
+      currentValues.chapter
+    }&searchType=${currentValues.searchType}&suggestion=${encodeURIComponent(
       query
-    )}`;
+    )}&session=${sessionId}`;
     try {
-      const response = await axios.get(url);
+      const response = await axiosInstance.get(url);
       setSearchApiData(response.data.data);
     } catch (err) {
       toast.error("api failed in catch❌❌❌❌");
@@ -209,23 +222,92 @@ const Dashboard = () => {
     debounce(async (query) => {
       if (query) {
         setSearchLoading(true);
-        await fetchSuggestions(query, setSearchApiData, setError);
+        await fetchSuggestions(
+          query,
+          valuesRef.current,
+          setSearchApiData,
+          setError
+        );
         setSearchLoading(false);
       }
     }, 300), // Debounce interval in ms
     []
   );
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const customShortcuts = [
+    {
+      label: "1 Year",
+      getValue: () => {
+        const today = new Date();
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(today.getFullYear() - 1);
 
-  const [dateValue, setDateValue] = useState({ 
-    startDate: null, 
-    endDate: null
-});
+        return {
+          startDate: oneYearAgo,
+          endDate: today,
+        };
+      },
+    },
+  ];
+
+  const [graphsData, setGraphsData] = useState([]);
+
+  const [leftFilterData, setLeftFilterData] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const sessionId = localStorage.getItem("sessionId");
+        const response = await axiosInstance.get(`/data/records`, {
+          params: {
+            informationOf: "export",
+            dataType: "raw data",
+            duration: "20/03/2022-15/11/2022",
+            chapter: "30",
+            searchType: "product name",
+            searchValue: "Sorafenib,Tacrolimus",
+            session: sessionId,
+          },
+        });
+
+        const { data, metrics } = response.data.data || {};
+        console.log("API DATA=============", data);
+
+        setLeftFilterData(data);
+
+        if (metrics) {
+          // Transform each array in metrics into graph-ready data
+          const dynamicGraphsData = Object.entries(metrics).map(
+            ([key, value]) => {
+              const data = value.map((item) => ({
+                label:
+                  item.buyer ||
+                  item.supplier ||
+                  item.buyerCountry ||
+                  item.portOfOrigin ||
+                  "Unknown",
+                value: item.total,
+              }));
+              return {
+                key,
+                data,
+                label: key.replace(/([A-Z])/g, " $1").trim(), // Format key for display
+              };
+            }
+          );
+
+          setGraphsData(dynamicGraphsData);
+        } else {
+          console.error("Metrics data is missing in API response.");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    })();
+  }, []);
 
   return (
-    <div className="px-3 py-12 space-y-6 bg-gray-100">
+    <div className="px-3 py-6 space-y-6 bg-gray-100">
       {/* SEARCH FILTERS============================= */}
       <form
         className="flex w-full flex-col justify-between items-center gap-8"
@@ -331,13 +413,30 @@ const Dashboard = () => {
               </DemoContainer>
             </LocalizationProvider>
           </div> */}
-
-          <Datepicker
-            value={dateValue}
-            onChange={(newValue) => setDateValue(newValue)}
-            showShortcuts={true}
-            primaryColor={"blue"}
-          />
+          <div>
+            <Datepicker
+              value={values.duration}
+              // displayFormat="DD/MM/YYYY"
+              // inputId="datepicker"
+              // inputName="datepicker"
+              required={true}
+              // inputClassName="border-black rounded-sm focus:ring-0  bg-white placeholder:text-gray text-gray dark:bg-blue-900 dark:placeholder:text-blue-100"
+              onChange={(newValue) => {
+                const formattedStartDate = format(
+                  newValue.startDate,
+                  "dd/MM/yyyy"
+                );
+                const formattedEndDate = format(newValue.endDate, "dd/MM/yyyy");
+                setFieldValue(
+                  "duration",
+                  `${formattedStartDate}-${formattedEndDate}`
+                );
+              }}
+              showShortcuts={true}
+              primaryColor={"blue"}
+              customShortcuts={customShortcuts}
+            />
+          </div>
 
           {/* DATA TYPE FILTER ======= */}
           <div className="w-full">
@@ -414,8 +513,8 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* SEARCH BOX======= */}
         <div className="flex gap-5">
-          {/* SEARCH BOX======= */}
           <div>
             {/* <Sizes /> */}
 
@@ -427,14 +526,15 @@ const Dashboard = () => {
                 size="small"
                 options={searchApiData}
                 loading={searchLoading}
-                getOptionLabel={(option) => option.productDescription}
+                getOptionLabel={(option) => option.title || ""}
                 onInputChange={(event, value) => {
                   handleSearch(value); // Call debounced API function
                 }}
                 onChange={(event, value) => {
                   const selectedTitles = value
-                    .map((item) => item.productDescription) // Use the correct field
+                    .map((item) => item.title)
                     .join(", ");
+                  setFieldValue("searchValue", selectedTitles);
                   console.log("Selected Titles:", selectedTitles);
                 }}
                 renderInput={(params) => (
@@ -442,8 +542,11 @@ const Dashboard = () => {
                     {...params}
                     label="Search"
                     placeholder="Search the product..."
-                    error={!!error}
-                    // helperText={error || "Start typing to search"}
+                    error={!!errors.searchValue && touched.searchValue}
+                    // helperText={
+                    //   (touched.searchValue && errors.searchValue) ||
+                    //   "Start typing to search"
+                    // }
                     InputProps={{
                       ...params.InputProps,
                       endAdornment: (
@@ -553,22 +656,21 @@ const Dashboard = () => {
             </button>
           </form>
           <p className="py-4"></p>
-          <BarChart />
+          {/* <BarChart /> */}
           {/* <DonutChart /> */}
         </div>
       </dialog>
-      {/* -------------------------------------------TITLE CARDS--------------------------------- */}
+
+      {/* TITLE CARDS-------- */}
       <DataCard />
 
       {/* <HorizontalTabs /> */}
 
       <div className="grid gap-5" style={{ gridTemplateColumns: "1fr 6fr" }}>
         {/* FILTERS******** */}
-        <div>
-          <Filter />
-        </div>
-        {/* ------------------CARDS----------------------------------------- */}
-        {!showAllGraphs ? (
+        <div>{graphsData && <Filter leftFilterData={leftFilterData} />}</div>
+        {/* GRAPHS CARDS=========================== */}
+        {showAllGraphs ? (
           <div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {Array.from({ length: 8 }).map((_, index) => (
@@ -601,8 +703,6 @@ const Dashboard = () => {
                         />
                         <FaChevronDown />
                       </label>
-
-                      {/* -----------------------------------ACCORDIAN------------------------------- */}
                       <Accordion />
                     </div>
                   </div>
@@ -612,15 +712,21 @@ const Dashboard = () => {
           </div>
         ) : (
           <div>
-            {/* -------------------------------------------ALL GRAPHS----------------------------------------- */}
-            <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              {Array.from({ length: 8 }).map((_, index) => (
-                <div key={index} className="card bg-base-100 w-full border-2">
-                  <div className="p-3">
-                    <BarChart />
+            {/* ALL GRAPHS************************ */}
+            <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2">
+              {graphsData.length > 0 ? (
+                graphsData.map((graph, index) => (
+                  <div key={index} className="card bg-base-100 w-full border-2">
+                    <div className="p-3">
+                      <BarChart data={graph.data} label={graph.label} />
+                    </div>
                   </div>
+                ))
+              ) : (
+                <div>
+                  <span className="loading loading-spinner loading-lg"></span>
                 </div>
-              ))}
+              )}
             </div>
           </div>
         )}
