@@ -211,7 +211,7 @@ const Dashboard = () => {
       const response = await axiosInstance.get(url);
       setSearchApiData(response.data.data);
     } catch (err) {
-      toast.error("api failed in catch❌❌❌❌");
+      toast.error("api failed in catch❌❌❌");
       console.error("error====", err);
       setError(err.message);
     }
