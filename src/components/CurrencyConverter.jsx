@@ -1,9 +1,8 @@
 "use client";
-import { useEffect } from "react";
-import { useState } from "react";
 // import CurrencyDropdown from "./dropdown";
 import { HiArrowsRightLeft } from "react-icons/hi2";
 import CurrencyDropdown from "./CurrencyDropdown";
+import { useEffect, useState } from "react";
 
 const CurrencyConverter = () => {
   const [currencies, setCurrencies] = useState([]);
@@ -12,9 +11,13 @@ const CurrencyConverter = () => {
   const [toCurrency, setToCurrency] = useState("INR");
   const [convertedAmount, setConvertedAmount] = useState(null);
   const [converting, setConverting] = useState(false);
-  const [favorites, setFavorites] = useState(
-    JSON.parse(localStorage.getItem("favorites")) || ["INR", "EUR"]
-  );
+  const [favorites, setFavorites] = useState([]);
+
+  // Initialize favorites from localStorage on the client
+  useEffect(() => {
+    const storedFavorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    setFavorites(storedFavorites.length ? storedFavorites : ["INR", "EUR"]);
+  }, []);
 
   // Currencies -> https://api.frankfurter.app/currencies
   const fetchCurrencies = async () => {

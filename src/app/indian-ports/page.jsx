@@ -1,7 +1,7 @@
 import IndianPortTable from "@/components/IndianPortTable";
 import React from "react";
 
-export default function page() {
+export default function IndianPorts() {
   return (
     <div className="text-center">
       <h1 className="text-2xl font-bold my-5">

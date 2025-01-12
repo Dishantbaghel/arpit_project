@@ -3,6 +3,7 @@ import "./globals.css";
 import NavbarFooterWrapper from "@/components/NavbarFooterWrapper";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +19,9 @@ export default function RootLayout({ children }) {
         // className={inter.className}
         className="flex flex-col justify-between min-h-[100vh]"
       >
-        <NavbarFooterWrapper>{children}</NavbarFooterWrapper>
+        <Suspense fallback={<div>Loading...</div>}>
+          <NavbarFooterWrapper>{children}</NavbarFooterWrapper>
+        </Suspense>
         <ToastContainer
           position="top-right"
           autoClose={5000}

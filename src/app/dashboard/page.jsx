@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
@@ -7,15 +8,10 @@ import { RxSize } from "react-icons/rx";
 import { IoBarChart } from "react-icons/io5";
 
 import { FaChevronDown } from "react-icons/fa";
-import TabsComponent from "@/components/Tabs";
 import BarChart from "@/components/Barchart";
 import Accordion from "@/components/Accordion";
 import Table from "@/components/Table";
 import { themeChange } from "theme-change";
-import AutocompleteWithBadge from "@/components/test";
-import CheckboxesTags from "@/components/CheckboxDropdown";
-import Sizes from "@/components/SearchboxDropdown";
-import DateRange from "@/components/DateRange";
 import {
   Autocomplete,
   Button,
@@ -29,34 +25,17 @@ import {
   TextField,
 } from "@mui/material";
 import Filter from "@/components/Filter";
-import axios from "axios";
 import { useFormik } from "formik";
-
-import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
-import FormatAlignCenterIcon from "@mui/icons-material/FormatAlignCenter";
-import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
-import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { validationSchema } from "@/utils/validationSchemas";
-
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import DataCard from "@/components/DataCard";
-
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
-import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDateRangeField";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import HorizontalTabs from "@/components/HorizontalTabs";
-import VerticalTabs from "@/components/VerticalTabs";
 // import debounce from "lodash.debounce";
 import debounce from "lodash/debounce";
 import { toast } from "react-toastify";
 import Datepicker from "react-tailwindcss-datepicker";
 import axiosInstance from "@/utils/axiosInstance";
 import { format } from "date-fns";
+import { validationSchema } from "@/utils/validationSchemas";
 
 const chapters = [
   { title: "28" },
@@ -77,17 +56,14 @@ const searchOptions = [
   { title: "Foreign Company" },
 ];
 
-const Dashboard = () => {
+export default function Dashboard() {
   const [showAllGraphs, setShowAllGraphs] = useState(false);
-
-  const [alignment, setAlignment] = React.useState("left");
-
-  const handleAlignment = (event, newAlignment) => {
-    setAlignment(newAlignment);
-  };
+  const [sessionId, setSessionId] = useState(null);
 
   useEffect(() => {
     themeChange(false);
+    const storedSessionId = localStorage.getItem("sessionId" || "");
+    setSessionId(storedSessionId);
   }, []);
 
   // ==========================================================
@@ -111,10 +87,10 @@ const Dashboard = () => {
       searchType: "",
       searchValue: "",
     },
-    // validationSchema: validationSchema,
+    validationSchema: validationSchema,
     onSubmit: async (values) => {
       console.log("VALUES====", values);
-      const sessionId = localStorage.getItem("sessionId");
+      // const sessionId = localStorage.getItem("sessionId");
 
       const url = `/data/records?informationOf=${values.info}&dataType=${values.dataType}&duration=${values.duration}&chapter=${values.chapter}&searchType=${values.searchType}&searchValue=${values.searchValue}&session=${sessionId}`;
       // const url = `/data/records?informationOf=export&dataType=cleaned data&duration=20/03/2022-15/11/2022&chapter=30&searchType=product name&searchValue=Sorafenib,Tacrolimus`;
@@ -163,27 +139,6 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const url =
-  //       // "http://localhost:8080/data/records?informationOf=export&dataType=raw data&duration=20/03/2022-15/11/2022&chapter=30&searchType=product name&searchValue=Sorafenib";
-  //       "http://localhost:8080/data/records?informationOf=export&dataType=cleaned data&duration=20/03/2022-15/11/2022&chapter=30&searchType=product name&searchValue=Sorafenib";
-  //     try {
-  //       const response = await axios.get(url);
-  //       setApiData(response.data.data);
-  //       console.log("DATA=====", response.data);
-  //     } catch (err) {
-  //       console.log("error====", err);
-  //       setError(err.message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
-
-  const [open, setOpen] = useState(false); // For managing the dropdown state
   const [searchApiData, setSearchApiData] = useState([]); // Renamed to searchApiData
   const [searchLoading, setSearchLoading] = useState(false);
 
@@ -201,7 +156,7 @@ const Dashboard = () => {
     setError
   ) => {
     console.log("VALUES======", currentValues);
-    const sessionId = localStorage.getItem("sessionId");
+    // const sessionId = localStorage.getItem("sessionId");
     const url = `/data/suggestion?informationOf=${currentValues.info}&chapter=${
       currentValues.chapter
     }&searchType=${currentValues.searchType}&suggestion=${encodeURIComponent(
@@ -257,7 +212,7 @@ const Dashboard = () => {
   useEffect(() => {
     (async () => {
       try {
-        const sessionId = localStorage.getItem("sessionId");
+        // const sessionId = localStorage.getItem("sessionId");
         const response = await axiosInstance.get(`/data/records`, {
           params: {
             informationOf: "export",
@@ -356,63 +311,7 @@ const Dashboard = () => {
               </ToggleButton>
             </ToggleButtonGroup>
           </div>
-          {/* DATES FILTER ======= */}
-          {/* <div className="w-full">
-            <TextField
-              label="Start Date"
-              type="date"
-              variant="outlined"
-              name="startDate"
-              value={values.startDate}
-              size="small"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              sx={{ backgroundColor: "white", width: "100%" }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              error={touched.startDate && Boolean(errors.startDate)}
-              helperText={touched.startDate && errors.startDate}
-            />
-          </div>
-          <div className="w-full">
-            <TextField
-              label="End Date"
-              type="date"
-              variant="outlined"
-              size="small"
-              name="endDate"
-              value={values.endDate}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              sx={{ backgroundColor: "white", width: "100%" }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              error={touched.endDate && Boolean(errors.endDate)}
-              helperText={touched.endDate && errors.endDate}
-            />
-          </div> */}
-
-          {/* <div>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DemoContainer
-                components={["SingleInputDateRangeField"]}
-                sx={{ width: "100%" }}
-              >
-                <DateRangePicker
-                  slots={{ field: SingleInputDateRangeField }}
-                  name="allowedRange"
-                  slotProps={{
-                    textField: {
-                      size: "small",
-                      fullWidth: true,
-                    },
-                  }}
-                />
-              </DemoContainer>
-            </LocalizationProvider>
-          </div> */}
+          {/* DATE FILTER ======= */}
           <div>
             <Datepicker
               value={values.duration}
@@ -462,18 +361,17 @@ const Dashboard = () => {
           </div>
           {/* CHAPTER FILTER ======= */}
           <div className="w-full">
-            {/* <CheckboxesTags name="Chapters" chapters={chapters} width="100%" /> */}
             <Autocomplete
               size="small"
               id="chapter-select"
-              options={chapters} // Assuming chapters is an array of objects
+              options={chapters}
               getOptionLabel={(option) => option.title}
               value={
                 chapters.find((option) => option.title === values.chapter) ||
                 null
-              } // Match Formik value with the option
+              }
               onChange={(event, newValue) => {
-                setFieldValue("chapter", newValue?.title || ""); // Set value or fallback to empty string
+                setFieldValue("chapter", newValue?.title || "");
               }}
               renderInput={(params) => (
                 <TextField
@@ -562,53 +460,6 @@ const Dashboard = () => {
                 )}
               />
             </Stack>
-
-            {/* ==============================================================  */}
-
-            {/* <Stack sx={{ width: 500, marginBottom: 2 }}>
-              <Autocomplete
-                sx={{ backgroundColor: "white" }}
-                open={open}
-                onOpen={handleOpen}
-                onClose={handleClose}
-                size="small"
-                options={searchApiData}
-                loading={searchLoading}
-                isOptionEqualToValue={(option, value) =>
-                  option.productDescription === value.productDescription
-                }
-                getOptionLabel={(option) => option.productDescription || ""}
-                onInputChange={(event, value) => {
-                  handleSearch(value); // Fetch options based on input
-                }}
-                onChange={(event, value) => {
-                  const selectedTitles = value
-                    .map((item) => item.productDescription) // Map selected descriptions
-                    .join(", ");
-                  console.log("Selected Titles:", selectedTitles);
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Search"
-                    placeholder="Search the product..."
-                    error={!!error}
-                    // helperText={error || "Start typing to search"}
-                    InputProps={{
-                      ...params.InputProps,
-                      endAdornment: (
-                        <>
-                          {searchLoading ? (
-                            <CircularProgress color="inherit" size={20} />
-                          ) : null}
-                          {params.InputProps.endAdornment}
-                        </>
-                      ),
-                    }}
-                  />
-                )}
-              />
-            </Stack> */}
           </div>
 
           <div>
@@ -661,15 +512,10 @@ const Dashboard = () => {
         </div>
       </dialog>
 
-      {/* TITLE CARDS-------- */}
       <DataCard />
 
-      {/* <HorizontalTabs /> */}
-
       <div className="grid gap-5" style={{ gridTemplateColumns: "1fr 6fr" }}>
-        {/* FILTERS******** */}
         <div>{graphsData && <Filter leftFilterData={leftFilterData} />}</div>
-        {/* GRAPHS CARDS=========================== */}
         {showAllGraphs ? (
           <div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -712,7 +558,6 @@ const Dashboard = () => {
           </div>
         ) : (
           <div>
-            {/* ALL GRAPHS************************ */}
             <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2">
               {graphsData.length > 0 ? (
                 graphsData.map((graph, index) => (
@@ -731,10 +576,7 @@ const Dashboard = () => {
           </div>
         )}
       </div>
-      {/* TABLE************  */}
       <div>{apidata && <Table apidata={apidata} />}</div>
     </div>
   );
-};
-
-export default Dashboard;
+}
