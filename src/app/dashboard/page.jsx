@@ -30,15 +30,15 @@ import axiosInstance from "@/utils/axiosInstance";
 import { format } from "date-fns";
 import { validationSchema } from "@/utils/validationSchemas";
 
-// import BarChart from "@/components/Barchart";
 import Accordion from "@/components/Accordion";
 import Table from "@/components/Table";
 import Filter from "@/components/Filter";
 
+// import BarChart from "@/components/Barchart";
 import dynamic from "next/dynamic";
 
 // Dynamically import BarChart and disable SSR
-const BarChart = dynamic(() => import("../../components/BarChart"), {
+const BarChart = dynamic(() => import("../../components/BarChart.jsx"), {
   ssr: false,
 });
 
