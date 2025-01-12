@@ -38,7 +38,7 @@ import Filter from "@/components/Filter";
 import dynamic from "next/dynamic";
 
 // Dynamically import BarChart and disable SSR
-const BarChart = dynamic(() => import("../../components/BarChart.jsx"), {
+const BarChart = dynamic(() => import("../../components/Barchart"), {
   ssr: false,
 });
 
