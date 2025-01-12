@@ -30,19 +30,17 @@ import axiosInstance from "@/utils/axiosInstance";
 import { format } from "date-fns";
 import { validationSchema } from "@/utils/validationSchemas";
 
-
 // import BarChart from "@/components/Barchart";
 import Accordion from "@/components/Accordion";
 import Table from "@/components/Table";
 import Filter from "@/components/Filter";
 
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
 // Dynamically import BarChart and disable SSR
-const BarChart = dynamic(() => import('@/components/BarChart'), {
-  ssr: false, // Disable SSR for this component
+const BarChart = dynamic(() => import("../../components/BarChart"), {
+  ssr: false,
 });
-
 
 const chapters = [
   { title: "28" },
@@ -417,7 +415,6 @@ export default function Dashboard() {
 
         <div className="flex gap-5">
           <div>
-
             <Stack sx={{ width: 500, marginBottom: 2 }}>
               <Autocomplete
                 sx={{ backgroundColor: "white" }}
@@ -497,7 +494,6 @@ export default function Dashboard() {
         </div>
       </form>
 
-
       <dialog id="my_modal_3" className="modal">
         <div className="modal-box">
           <form method="dialog">
@@ -560,7 +556,11 @@ export default function Dashboard() {
                 graphsData.map((graph, index) => (
                   <div key={index} className="card bg-base-100 w-full border-2">
                     <div className="p-3">
-                      <BarChart data={graph.data} label={graph.label} />
+                      {graph.data && graph.data.length > 0 ? (
+                        <BarChart data={graph.data} label={graph.label} />
+                      ) : (
+                        <p>No data available for the chart</p>
+                      )}
                     </div>
                   </div>
                 ))
