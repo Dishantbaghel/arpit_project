@@ -21,7 +21,7 @@ ChartJS.register(
   zoomPlugin // Register the zoom plugin
 );
 
-const BarChart = ({ data, label }) => {
+const BarChart = ({ data = [], label = "Default Label" }) => {
   const chartData = {
     labels: data.map((item) => item.label),
     datasets: [

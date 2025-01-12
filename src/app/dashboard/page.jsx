@@ -1,16 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { CiSearch } from "react-icons/ci";
-
 import { RxSize } from "react-icons/rx";
 import { IoBarChart } from "react-icons/io5";
-
 import { FaChevronDown } from "react-icons/fa";
-import BarChart from "@/components/Barchart";
-import Accordion from "@/components/Accordion";
-import Table from "@/components/Table";
 import { themeChange } from "theme-change";
 import {
   Autocomplete,
@@ -24,7 +18,6 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import Filter from "@/components/Filter";
 import { useFormik } from "formik";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
@@ -36,6 +29,20 @@ import Datepicker from "react-tailwindcss-datepicker";
 import axiosInstance from "@/utils/axiosInstance";
 import { format } from "date-fns";
 import { validationSchema } from "@/utils/validationSchemas";
+
+
+// import BarChart from "@/components/Barchart";
+import Accordion from "@/components/Accordion";
+import Table from "@/components/Table";
+import Filter from "@/components/Filter";
+
+import dynamic from 'next/dynamic';
+
+// Dynamically import BarChart and disable SSR
+const BarChart = dynamic(() => import('@/components/BarChart'), {
+  ssr: false, // Disable SSR for this component
+});
+
 
 const chapters = [
   { title: "28" },
@@ -62,8 +69,10 @@ export default function Dashboard() {
 
   useEffect(() => {
     themeChange(false);
-    const storedSessionId = localStorage.getItem("sessionId" || "");
-    setSessionId(storedSessionId);
+    if (typeof window !== "undefined") {
+      const storedSessionId = localStorage.getItem("sessionId" || "");
+      setSessionId(storedSessionId);
+    }
   }, []);
 
   // ==========================================================
@@ -263,7 +272,6 @@ export default function Dashboard() {
 
   return (
     <div className="px-3 py-6 space-y-6 bg-gray-100">
-      {/* SEARCH FILTERS============================= */}
       <form
         className="flex w-full flex-col justify-between items-center gap-8"
         onSubmit={handleSubmit}
@@ -311,7 +319,6 @@ export default function Dashboard() {
               </ToggleButton>
             </ToggleButtonGroup>
           </div>
-          {/* DATE FILTER ======= */}
           <div>
             <Datepicker
               value={values.duration}
@@ -337,7 +344,6 @@ export default function Dashboard() {
             />
           </div>
 
-          {/* DATA TYPE FILTER ======= */}
           <div className="w-full">
             <FormControl
               className="w-full"
@@ -359,7 +365,6 @@ export default function Dashboard() {
               </Select>
             </FormControl>
           </div>
-          {/* CHAPTER FILTER ======= */}
           <div className="w-full">
             <Autocomplete
               size="small"
@@ -384,7 +389,6 @@ export default function Dashboard() {
               style={{ width: "100%", backgroundColor: "white" }}
             />
           </div>
-          {/* SEARCH TYPE FILTER ======= */}
           <div className="w-full">
             <FormControl
               className="w-full"
@@ -411,10 +415,8 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* SEARCH BOX======= */}
         <div className="flex gap-5">
           <div>
-            {/* <Sizes /> */}
 
             <Stack sx={{ width: 500, marginBottom: 2 }}>
               <Autocomplete
@@ -478,7 +480,6 @@ export default function Dashboard() {
               Search
             </Button>
           </div>
-          {/* -------------------------------------------SHOW GRAPH--------------------------------- */}
           <div>
             <Button
               variant="contained"
@@ -496,19 +497,15 @@ export default function Dashboard() {
         </div>
       </form>
 
-      {/* =========================================== */}
 
       <dialog id="my_modal_3" className="modal">
         <div className="modal-box">
           <form method="dialog">
-            {/* if there is a button in form, it will close the modal */}
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
               ✕
             </button>
           </form>
           <p className="py-4"></p>
-          {/* <BarChart /> */}
-          {/* <DonutChart /> */}
         </div>
       </dialog>
 
