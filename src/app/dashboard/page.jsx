@@ -63,15 +63,15 @@ const searchOptions = [
 
 export default function Dashboard() {
   const [showAllGraphs, setShowAllGraphs] = useState(false);
-  const [sessionId, setSessionId] = useState(null);
+  // const [sessionId, setSessionId] = useState(null);
 
-  useEffect(() => {
-    themeChange(false);
-    if (typeof window !== "undefined") {
-      const storedSessionId = localStorage.getItem("sessionId" || "");
-      setSessionId(storedSessionId);
-    }
-  }, []);
+  // useEffect(() => {
+  //   themeChange(false);
+  //   // if (typeof window !== "undefined") {
+  //     const storedSessionId = localStorage.getItem("sessionId" || "");
+  //     setSessionId(storedSessionId);
+  //   // }
+  // }, []);
 
   // ==========================================================
 
@@ -94,12 +94,12 @@ export default function Dashboard() {
       searchType: "",
       searchValue: "",
     },
-    validationSchema: validationSchema,
+    // validationSchema: validationSchema,
     onSubmit: async (values) => {
       console.log("VALUES====", values);
-      // const sessionId = localStorage.getItem("sessionId");
+      const sessionId = localStorage.getItem("sessionId");
 
-      const url = `/data/records?informationOf=${values.info}&dataType=${values.dataType}&duration=${values.duration}&chapter=${values.chapter}&searchType=${values.searchType}&searchValue=${values.searchValue}&session=${sessionId}`;
+      const url = `/data/records?informationOf=${values.info}&dataType=${values.dataType}&duration=20/03/2022-15/11/2022&chapter=${values.chapter}&searchType=${values.searchType}&searchValue=${values.searchValue}&session=${sessionId}`;
       // const url = `/data/records?informationOf=export&dataType=cleaned data&duration=20/03/2022-15/11/2022&chapter=30&searchType=product name&searchValue=Sorafenib,Tacrolimus`;
       try {
         const response = await axiosInstance.get(url);
@@ -163,7 +163,7 @@ export default function Dashboard() {
     setError
   ) => {
     console.log("VALUES======", currentValues);
-    // const sessionId = localStorage.getItem("sessionId");
+    const sessionId = localStorage.getItem("sessionId");
     const url = `/data/suggestion?informationOf=${currentValues.info}&chapter=${
       currentValues.chapter
     }&searchType=${currentValues.searchType}&suggestion=${encodeURIComponent(
@@ -219,7 +219,7 @@ export default function Dashboard() {
   useEffect(() => {
     (async () => {
       try {
-        // const sessionId = localStorage.getItem("sessionId");
+        const sessionId = localStorage.getItem("sessionId");
         const response = await axiosInstance.get(`/data/records`, {
           params: {
             informationOf: "export",
@@ -268,7 +268,7 @@ export default function Dashboard() {
     })();
   }, []);
 
-  
+  const [dateDuration, setDateDuration] = useState("");
 
   return (
     <div className="px-3 py-6 space-y-6 bg-gray-100">
@@ -319,15 +319,17 @@ export default function Dashboard() {
               </ToggleButton>
             </ToggleButtonGroup>
           </div>
-          <div>
+          <div className="w-full">
             <Datepicker
-              value={values.duration}
+              // value={values.duration}
+              value={dateDuration}
               // displayFormat="DD/MM/YYYY"
               // inputId="datepicker"
               // inputName="datepicker"
-              required={true}
-              // inputClassName="border-black rounded-sm focus:ring-0  bg-white placeholder:text-gray text-gray dark:bg-blue-900 dark:placeholder:text-blue-100"
+              // required={true}
+              inputClassName="w-full p-2 border-[1px] border-[#C4C4C4] rounded-md focus:ring-0  bg-white placeholder:text-gray text-gray dark:bg-blue-900 dark:placeholder:text-blue-100"
               onChange={(newValue) => {
+                setDateDuration(newValue);
                 const formattedStartDate = format(
                   newValue.startDate,
                   "dd/MM/yyyy"
@@ -338,9 +340,12 @@ export default function Dashboard() {
                   `${formattedStartDate}-${formattedEndDate}`
                 );
               }}
-              showShortcuts={true}
+              // showShortcuts={true}
               primaryColor={"blue"}
-              customShortcuts={customShortcuts}
+              // customShortcuts={customShortcuts}
+              // onChange={(newValue) => {
+              //   setFieldValue("duration", newValue);
+              // }}
             />
           </div>
 
