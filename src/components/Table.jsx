@@ -4,8 +4,7 @@ import {
   useMaterialReactTable,
 } from "material-react-table";
 
-const Table = ({ apidata }) => {
-  console.log("API DATA=============", apidata);
+const Table = ({ recordData }) => {
   const columns = useMemo(
     () => [
       {
@@ -74,7 +73,7 @@ const Table = ({ apidata }) => {
 
   const table = useMaterialReactTable({
     columns,
-    data: apidata?.data,
+    data: recordData?.data || [],
   });
 
   return <MaterialReactTable table={table} />;

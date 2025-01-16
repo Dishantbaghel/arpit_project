@@ -76,28 +76,26 @@ const Filter = ({ leftFilterData }) => {
     });
   };
 
+  const uniqueKeys = Array.from(
+    new Set(leftFilterData.flatMap((item) => Object.keys(item)))
+  );
+
+  const uniqueValues = (key) => {
+    const values = leftFilterData.map((item) => item[key]);
+    return Array.from(new Set(values)); // Remove duplicate values for the given key
+  };
+
+  const filteredData = leftFilterData.filter((item) =>
+    Object.values(item).some((value) =>
+      String(value).toLowerCase().includes(searchValue.toLowerCase())
+    )
+  );
+
   return (
     <div
       className="rounded-md flex bg-white relative shadow-xl"
       onMouseLeave={handleMouseLeave}
     >
-      {/* Titles Section */}
-      {/* <div className="w-full flex flex-col justify-between bg-gray-100 rounded-md">
-        {filterData.map((item, index) => (
-          <div
-            key={index}
-            className={`p-2 ${
-              index === filterData.length - 1 ? "" : "border-b-2"
-            } border-gray-400 cursor-pointer hover:bg-gray-300 ${
-              activeIndex === index ? "bg-gray-300" : ""
-            }`}
-            onMouseEnter={() => handleMouseEnter(index)}
-          >
-            {item.title}
-          </div>
-        ))}
-      </div> */}
-      {/* ======================= */}
       <div className="w-full flex flex-col justify-between bg-gray-100 rounded-md">
         {leftFilterData.length > 0 && (
           <div>
@@ -120,12 +118,12 @@ const Filter = ({ leftFilterData }) => {
         {/* Filters Section */}
         {activeIndex !== null && (
           <div
-            className="z-10 absolute w-48 bg-white border-gray-300 shadow-2xl rounded-lg p-3 border-2"
+            className="z-10 absolute w-48 bg-white border-gray-300 shadow-2xl rounded-lg p-2 border-2"
             style={{ top: `${activeIndex * 40}px`, left: "100%" }}
             onMouseEnter={() => setActiveIndex(activeIndex)} // Keep modal open on hover
             onMouseLeave={handleMouseLeave} // Close modal when mouse leaves modal area
           >
-            <div className="border-b-2 border-black flex justify-center items-center gap-2 p-1">
+            <div className="border-b-2 border-black flex justify-center items-center gap-2 ">
               <IoIosSearch size={30} />
               <input
                 type="text"
@@ -142,7 +140,7 @@ const Filter = ({ leftFilterData }) => {
             </div>
 
             {/* Select All Checkbox */}
-            <label className="flex items-center gap-2 mt-2">
+            <label className="flex items-center gap-2 my-2">
               <input
                 type="checkbox"
                 className="checkbox checkbox-sm"
@@ -152,28 +150,29 @@ const Filter = ({ leftFilterData }) => {
               <span>Select All</span>
             </label>
 
-            {leftFilterData.map((item, i) => (
-              <div key={i} className="mb-4">
-                <div className="flex flex-col gap-2">
-                  {Object.keys(item).map(
-                    (key, index) =>
-                      // Only show values when the hovered key matches the current key
-                      activeIndex === index && (
-                        <label key={index} className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            className="checkbox checkbox-sm"
-                            checked={checkboxes.items[index] || false} // Ensure checkbox state matches
-                            onChange={() => handleCheckboxChange(index, i)} // Handle state changes
-                          />
-                          <span>{item[key]}</span>{" "}
-                          {/* Display the value corresponding to the key */}
-                        </label>
-                      )
-                  )}
-                </div>
-              </div>
-            ))}
+            {/* Render Unique Values for the Active Key */}
+            <div className="flex flex-col gap-1">
+              {uniqueValues(uniqueKeys[activeIndex])
+                .filter((value) => {
+                  const valueString = String(value); // Convert value to a string
+                  return valueString
+                    .toLowerCase()
+                    .includes(searchValue.toLowerCase());
+                })
+                .map((value, i) => (
+                  <div key={i}>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        className="checkbox checkbox-sm"
+                        checked={checkboxes.items[i] || false}
+                        onChange={() => handleCheckboxChange(i, activeIndex)}
+                      />
+                      <span>{value}</span>
+                    </label>
+                  </div>
+                ))}
+            </div>
           </div>
         )}
       </div>

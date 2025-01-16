@@ -8,8 +8,8 @@ import { FaChevronDown } from "react-icons/fa";
 import { themeChange } from "theme-change";
 import {
   Autocomplete,
+  Backdrop,
   Button,
-  Checkbox,
   CircularProgress,
   FormControl,
   InputLabel,
@@ -36,6 +36,7 @@ import Filter from "@/components/Filter";
 
 // import BarChart from "@/components/Barchart";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 
 // Dynamically import BarChart and disable SSR
 const BarChart = dynamic(() => import("../../components/Barchart"), {
@@ -63,6 +64,14 @@ const searchOptions = [
 
 export default function Dashboard() {
   const [showAllGraphs, setShowAllGraphs] = useState(false);
+  const [dateDuration, setDateDuration] = useState(""); // for date duration
+
+  // RECORD API=============
+  const [recordData, setRecordData] = useState([]);
+  const [recordLoading, setRecordLoading] = useState(false);
+  const [recordError, setRecordError] = useState("");
+  const router = useRouter();
+
   // const [sessionId, setSessionId] = useState(null);
 
   // useEffect(() => {
@@ -87,8 +96,6 @@ export default function Dashboard() {
     initialValues: {
       info: "import",
       dataType: "",
-      // startDate: "",
-      // endDate: "",
       duration: "",
       chapter: "",
       searchType: "",
@@ -98,16 +105,26 @@ export default function Dashboard() {
     onSubmit: async (values) => {
       console.log("VALUES====", values);
       const sessionId = localStorage.getItem("sessionId");
-
-      const url = `/data/records?informationOf=${values.info}&dataType=${values.dataType}&duration=20/03/2022-15/11/2022&chapter=${values.chapter}&searchType=${values.searchType}&searchValue=${values.searchValue}&session=${sessionId}`;
-      // const url = `/data/records?informationOf=export&dataType=cleaned data&duration=20/03/2022-15/11/2022&chapter=30&searchType=product name&searchValue=Sorafenib,Tacrolimus`;
       try {
-        const response = await axiosInstance.get(url);
-        setApiData(response.data.data);
+        setRecordLoading(true);
+        setRecordError(null);
+        const response = await axiosInstance.get(`/data/records`, {
+          params: {
+            informationOf: values.info,
+            dataType: values.dataType,
+            duration: values.duration,
+            chapter: values.chapter,
+            searchType: values.searchType,
+            searchValue: values.searchValue,
+            session: sessionId,
+          },
+        });
+        setRecordData(response.data.data);
+
+        console.log("DISHANT CHECK============", response.data.data);
 
         const { metrics } = response.data.data || {};
         if (metrics) {
-          // Transform each array in metrics into graph-ready data
           const dynamicGraphsData = Object.entries(metrics).map(
             ([key, value]) => {
               const data = value.map((item) => ({
@@ -133,23 +150,25 @@ export default function Dashboard() {
         }
       } catch (err) {
         console.log("error====", err);
-        setError(err.message);
+        const errorMessage = err.response?.data?.message || "An error occurred";
+        setRecordError(errorMessage);
+
+        if (err.response.status === 403) {
+          console.log("************Inside 403 error*********");
+          router.push("/login");
+        }
       } finally {
-        setLoading(false);
+        setRecordLoading(false);
       }
     },
   });
 
-  // ==========================================================
+  const valuesRef = useRef(values);
 
-  const [apidata, setApiData] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [searchApiData, setSearchApiData] = useState([]); // Renamed to searchApiData
+  const [searchApiData, setSearchApiData] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
-
-  const valuesRef = useRef(values);
 
   // Update the ref whenever `values` change
   useEffect(() => {
@@ -232,6 +251,8 @@ export default function Dashboard() {
           },
         });
 
+        setRecordData(response.data.data);
+
         const { data, metrics } = response.data.data || {};
         console.log("API DATA=============", data);
 
@@ -267,8 +288,6 @@ export default function Dashboard() {
       }
     })();
   }, []);
-
-  const [dateDuration, setDateDuration] = useState("");
 
   return (
     <div className="px-3 py-6 space-y-6 bg-gray-100">
@@ -511,76 +530,102 @@ export default function Dashboard() {
           <p className="py-4"></p>
         </div>
       </dialog>
+      {recordLoading ? (
+        <div>
+          <Backdrop
+            sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+            open={true}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        </div>
+      ) : recordError ? (
+        <div className="text-red-500 text-center">{recordError}</div>
+      ) : (
+        recordData?.data?.length > 0 && (
+          <div className="space-y-6">
+            <DataCard />
+            <div
+              className="grid gap-5"
+              style={{ gridTemplateColumns: "1fr 6fr" }}
+            >
+              <div>
+                <Filter leftFilterData={leftFilterData} />
+              </div>
+              {showAllGraphs ? (
+                <div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    {Array.from({ length: 8 }).map((_, index) => (
+                      <div
+                        key={index}
+                        className="card bg-base-100  shadow-xl rounded-lg"
+                      >
+                        <div className="card-body p-2">
+                          <div className="flex justify-between">
+                            <h6 className="card-title text-xs">
+                              Year/Month (5/50)
+                            </h6>
+                            <div className="flex gap-2">
+                              <h6 className="card-title text-xs">1Y 3Y</h6>
+                              <button
+                                onClick={() =>
+                                  document
+                                    .getElementById("my_modal_3")
+                                    .showModal()
+                                }
+                              >
+                                <IoBarChart />
+                              </button>
+                              <RxSize />
+                            </div>
+                          </div>
 
-      <DataCard />
-
-      <div className="grid gap-5" style={{ gridTemplateColumns: "1fr 6fr" }}>
-        <div>{graphsData && <Filter leftFilterData={leftFilterData} />}</div>
-        {showAllGraphs ? (
-          <div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              {Array.from({ length: 8 }).map((_, index) => (
-                <div
-                  key={index}
-                  className="card bg-base-100  shadow-xl rounded-lg"
-                >
-                  <div className="card-body p-2">
-                    <div className="flex justify-between">
-                      <h6 className="card-title text-xs">Year/Month (5/50)</h6>
-                      <div className="flex gap-2">
-                        <h6 className="card-title text-xs">1Y 3Y</h6>
-                        <button
-                          onClick={() =>
-                            document.getElementById("my_modal_3").showModal()
-                          }
-                        >
-                          <IoBarChart />
-                        </button>
-                        <RxSize />
+                          <div>
+                            <label className="input input-sm input-bordered flex items-center gap-2">
+                              <input
+                                type="text"
+                                className="grow"
+                                placeholder="Search"
+                              />
+                              <FaChevronDown />
+                            </label>
+                            <Accordion />
+                          </div>
+                        </div>
                       </div>
-                    </div>
-
-                    <div>
-                      <label className="input input-sm input-bordered flex items-center gap-2">
-                        <input
-                          type="text"
-                          className="grow"
-                          placeholder="Search"
-                        />
-                        <FaChevronDown />
-                      </label>
-                      <Accordion />
-                    </div>
+                    ))}
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div>
-            <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2">
-              {graphsData.length > 0 ? (
-                graphsData.map((graph, index) => (
-                  <div key={index} className="card bg-base-100 w-full border-2">
-                    <div className="p-3">
-                      {graph.data && graph.data.length > 0 ? (
-                        <BarChart data={graph.data} label={graph.label} />
-                      ) : (
-                        <p>No data available for the chart</p>
-                      )}
-                    </div>
-                  </div>
-                ))
               ) : (
-                <div>
-                  <span className="loading loading-spinner loading-lg"></span>
+                <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2">
+                  {graphsData.length > 0 ? (
+                    graphsData.map((graph, index) => (
+                      <div
+                        key={index}
+                        className="card bg-base-100 w-full border-2"
+                      >
+                        <div className="p-3">
+                          {graph.data && graph.data.length > 0 ? (
+                            <BarChart data={graph.data} label={graph.label} />
+                          ) : (
+                            <p>No data available for the chart</p>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div>
+                      {/* <span className="loading loading-spinner loading-lg"></span> */}
+                      something went wrong
+                    </div>
+                  )}
                 </div>
               )}
             </div>
+            <div>{recordData && <Table recordData={recordData} />}</div>
           </div>
-        )}
-      </div>
-      <div>{apidata && <Table apidata={apidata} />}</div>
+        )
+      )}
     </div>
   );
 }
