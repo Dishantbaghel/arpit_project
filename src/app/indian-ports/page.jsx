@@ -7,9 +7,9 @@ export default function IndianPorts() {
       <h1 className="text-2xl font-bold my-5">
         MAJOR PORTS, AIRPORTS, ICD And CFS OF INDIA
       </h1>
-      <div className="grid grid-cols-2 gap-10 p-10">
+      <div className="p-10">
         <IndianPortTable />
-        <IndianPortTable />
+        {/* <IndianPortTable /> */}
       </div>
     </div>
   );

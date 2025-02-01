@@ -37,6 +37,10 @@ import Filter from "@/components/Filter";
 // import BarChart from "@/components/Barchart";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+import RecordTable from "@/components/RecordTable";
+import HorizontalFilters from "@/components/HorizontalFilters";
+import BarChartWithTrendLine from "@/components/TrendLineChart";
+import TestFilter from "@/components/Test";
 
 // Dynamically import BarChart and disable SSR
 const BarChart = dynamic(() => import("../../components/Barchart"), {
@@ -53,36 +57,19 @@ const chapters = [
   { title: "34" },
 ];
 
-const searchOptions = [
-  { title: "Product Description" },
-  { title: "Product Name" },
-  { title: "CAS Number" },
-  { title: "HS Code (6 digit)" },
-  { title: "Indian Company" },
-  { title: "Foreign Company" },
-];
-
 export default function Dashboard() {
   const [showAllGraphs, setShowAllGraphs] = useState(false);
   const [dateDuration, setDateDuration] = useState(""); // for date duration
 
   // RECORD API=============
   const [recordData, setRecordData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [recordLoading, setRecordLoading] = useState(false);
   const [recordError, setRecordError] = useState("");
+  const [error, setError] = useState(null);
   const router = useRouter();
-
-  // const [sessionId, setSessionId] = useState(null);
-
-  // useEffect(() => {
-  //   themeChange(false);
-  //   // if (typeof window !== "undefined") {
-  //     const storedSessionId = localStorage.getItem("sessionId" || "");
-  //     setSessionId(storedSessionId);
-  //   // }
-  // }, []);
-
-  // ==========================================================
+  const [searchApiData, setSearchApiData] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
 
   const {
     handleSubmit,
@@ -120,8 +107,9 @@ export default function Dashboard() {
           },
         });
         setRecordData(response.data.data);
+        setFilteredData(response.data.data);
 
-        console.log("DISHANT CHECK============", response.data.data);
+        // console.log("DISHANT CHECK============", response.data.data);
 
         const { metrics } = response.data.data || {};
         if (metrics) {
@@ -164,11 +152,6 @@ export default function Dashboard() {
   });
 
   const valuesRef = useRef(values);
-
-  const [error, setError] = useState(null);
-
-  const [searchApiData, setSearchApiData] = useState([]);
-  const [searchLoading, setSearchLoading] = useState(false);
 
   // Update the ref whenever `values` change
   useEffect(() => {
@@ -246,12 +229,13 @@ export default function Dashboard() {
             duration: "20/03/2022-15/11/2022",
             chapter: "30",
             searchType: "product name",
-            searchValue: "Sorafenib,Tacrolimus",
+            searchValue: "Sorafenib",
             session: sessionId,
           },
         });
 
         setRecordData(response.data.data);
+        setFilteredData(response.data.data);
 
         const { data, metrics } = response.data.data || {};
         console.log("API DATA=============", data);
@@ -288,6 +272,28 @@ export default function Dashboard() {
       }
     })();
   }, []);
+
+  const graphFilterHandler = (filteredData) => {
+    toast.success("function called");
+    console.log("graphsData=============", graphsData);
+    console.log("filteredData=============", filteredData);
+    setGraphsData(filteredData);
+  };
+
+  const searchOptions = [
+    { title: "Product Description", value: "productDescription" },
+    { title: "Product Name", value: "productName" },
+    { title: "CAS Number", value: "CAS_Number" },
+    { title: "HS Code (6 digit)", value: "H_S_Code" },
+    {
+      title: "Indian Company",
+      value: values.info === "import" ? "buyer" : "supplier",
+    },
+    {
+      title: "Foreign Company",
+      value: values.info === "import" ? "buyer" : "supplier",
+    },
+  ];
 
   return (
     <div className="px-3 py-6 space-y-6 bg-gray-100">
@@ -376,6 +382,7 @@ export default function Dashboard() {
             >
               <InputLabel id="data-type-label">Data Type</InputLabel>
               <Select
+                label="Data Type"
                 labelId="data-type-label"
                 id="data-type"
                 name="dataType"
@@ -417,10 +424,16 @@ export default function Dashboard() {
             <FormControl
               className="w-full"
               size="small"
-              sx={{ backgroundColor: "white" }}
+              sx={{ backgroundColor: "white", borderColor: "gray" }}
             >
-              <InputLabel id="search-type-label">Search Type</InputLabel>
+              <InputLabel
+                id="search-type-label"
+                // sx={{ color: "black", backgroundColor: "white", paddingX: 1 }}
+              >
+                Search Type
+              </InputLabel>
               <Select
+                label="Search Type"
                 labelId="search-type-label"
                 id="search-type"
                 name="searchType"
@@ -430,7 +443,7 @@ export default function Dashboard() {
                 error={touched.searchType && Boolean(errors.searchType)}
               >
                 {searchOptions.map((item, i) => (
-                  <MenuItem value={item.title} key={i}>
+                  <MenuItem value={item.value} key={i}>
                     {item.title}
                   </MenuItem>
                 ))}
@@ -542,15 +555,23 @@ export default function Dashboard() {
       ) : recordError ? (
         <div className="text-red-500 text-center">{recordError}</div>
       ) : (
-        recordData?.data?.length > 0 && (
+        filteredData?.data?.length > 0 && (
           <div className="space-y-6">
             <DataCard />
+            {/* <div>
+              <HorizontalFilters leftFilterData={leftFilterData} />
+            </div> */}
             <div
               className="grid gap-5"
               style={{ gridTemplateColumns: "1fr 6fr" }}
             >
               <div>
-                <Filter leftFilterData={leftFilterData} />
+                {/* <Filter leftFilterData={leftFilterData} /> */}
+                <TestFilter
+                  leftFilterData={leftFilterData}
+                  graphFilterHandler={graphFilterHandler}
+                  recordData={recordData}
+                />
               </div>
               {showAllGraphs ? (
                 <div>
@@ -622,7 +643,11 @@ export default function Dashboard() {
                 </div>
               )}
             </div>
-            <div>{recordData && <Table recordData={recordData} />}</div>
+            {/* <BarChartWithTrendLine /> */}
+            {/* <div>{recordData && <Table data={recordData?.data} />}</div> */}
+            <div>
+              {filteredData && <RecordTable data={filteredData?.data} />}
+            </div>
           </div>
         )
       )}

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { IoIosSearch, IoMdClose } from "react-icons/io";
+import { FaAngleDoubleRight } from "react-icons/fa";
 
 const filterData = [
   { title: "Product Name", apiName: "productName" },
@@ -42,7 +43,7 @@ const apiResponse = [
 ];
 
 const Filter = ({ leftFilterData }) => {
-  console.log("filter DATA=============", leftFilterData);
+  // console.log("filter DATA=============", leftFilterData);
   const [searchValue, setSearchValue] = useState("");
   const [activeIndex, setActiveIndex] = useState(null);
   const [checkboxes, setCheckboxes] = useState({
@@ -96,13 +97,13 @@ const Filter = ({ leftFilterData }) => {
       className="rounded-md flex bg-white relative shadow-xl"
       onMouseLeave={handleMouseLeave}
     >
-      <div className="w-full flex flex-col justify-between bg-gray-100 rounded-md">
+      <div className="w-full flex flex-col justify-between bg-white rounded-md">
         {leftFilterData.length > 0 && (
           <div>
             {Object.keys(leftFilterData[0]).map((key, index) => (
               <div
                 key={index}
-                className={`p-2 ${
+                className={`p-2 flex justify-between items-center ${
                   index === Object.keys(leftFilterData[0]).length - 1
                     ? ""
                     : "border-b-2"
@@ -110,6 +111,7 @@ const Filter = ({ leftFilterData }) => {
                 onMouseEnter={() => handleMouseEnter(index)}
               >
                 {key}
+                {/* <FaAngleDoubleRight /> */}
               </div>
             ))}
           </div>

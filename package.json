@@ -21,6 +21,7 @@
     "chartjs-plugin-zoom": "^2.2.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
+    "export-to-csv": "^1.4.0",
     "formik": "^2.4.6",
     "lodash": "^4.17.21",
     "material-react-table": "^2.13.2",

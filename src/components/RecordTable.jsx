@@ -6,26 +6,57 @@ import {
 } from "material-react-table";
 import { Box, Button } from "@mui/material";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import { mkConfig, generateCsv, download } from "export-to-csv";
-import data from "@/constants/indianPorts.json";
+import { mkConfig, generateCsv, download } from "export-to-csv"; //or use your library of choice here
 
 const columnHelper = createMRTColumnHelper();
 
 const columns = [
-  columnHelper.accessor("portName", {
-    header: "Port Name",
+  columnHelper.accessor("dateOfShipment", {
+    header: "S.Bill_Date",
     size: 150,
   }),
-  columnHelper.accessor("portCode", {
-    header: "Port Code",
+  columnHelper.accessor("HS_Code", {
+    header: "HS Code",
     size: 150,
   }),
-  columnHelper.accessor("mode", {
-    header: "Mode",
+  columnHelper.accessor("productName", {
+    header: "Product",
     size: 150,
   }),
-  columnHelper.accessor("indianState", {
-    header: "Indian State",
+  columnHelper.accessor("productDescription", {
+    header: "Product Description",
+    size: 150,
+  }),
+  columnHelper.accessor("quantity", {
+    header: "Quantity",
+    size: 200,
+  }),
+  columnHelper.accessor("quantityUnits", {
+    header: "Quantity_Unit",
+    size: 150,
+  }),
+  columnHelper.accessor("indainPort", {
+    header: "Indian_Ports",
+    size: 150,
+  }),
+  columnHelper.accessor("supplier", {
+    header: "Supplier",
+    size: 150,
+  }),
+  columnHelper.accessor("buyer", {
+    header: "Buyer",
+    size: 150,
+  }),
+  columnHelper.accessor("currency", {
+    header: "Currency",
+    size: 150,
+  }),
+  columnHelper.accessor("foreignCompany", {
+    header: "Foreign Company",
+    size: 150,
+  }),
+  columnHelper.accessor("foreignCountry", {
+    header: "Foreign Country",
     size: 150,
   }),
 ];
@@ -36,7 +67,7 @@ const csvConfig = mkConfig({
   useKeysAsHeaders: true,
 });
 
-const RecordTable = () => {
+const RecordTable = ({data}) => {
   const handleExportRows = (rows) => {
     const rowData = rows.map((row) => row.original);
     const csv = generateCsv(csvConfig)(rowData);
