@@ -229,11 +229,11 @@ export default function Dashboard() {
         const response = await axiosInstance.get(`/data/records`, {
           params: {
             informationOf: "export",
-            dataType: "raw data",
-            duration: "20/03/2022-15/11/2022",
+            dataType: "cleaned data",
+            duration: "01/02/2022-01/02/2025",
             chapter: "30",
             searchType: "product name",
-            searchValue: "Sorafenib",
+            searchValue: "Acetic Acid",
             session: sessionId,
           },
         });
