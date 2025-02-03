@@ -44,26 +44,26 @@ const BarChart = ({ data = [], label = "Default Label" }) => {
         beginAtZero: true,
       },
     },
-    plugins: {
-      zoom: {
-        pan: {
-          enabled: true, // Enable panning
-          mode: "x", // Allow panning in the x-axis only
-        },
-        zoom: {
-          wheel: {
-            enabled: true, // Enable zooming with the mouse wheel
-          },
-          drag: {
-            enabled: false, // Disable drag-to-zoom
-          },
-          pinch: {
-            enabled: true, // Enable pinch-to-zoom for touch devices
-          },
-          mode: "x", // Allow zooming in the x-axis only
-        },
-      },
-    },
+    // plugins: {
+    //   zoom: {
+    //     pan: {
+    //       enabled: true, // Enable panning
+    //       mode: "x", // Allow panning in the x-axis only
+    //     },
+    //     zoom: {
+    //       wheel: {
+    //         enabled: true, // Enable zooming with the mouse wheel
+    //       },
+    //       drag: {
+    //         enabled: false, // Disable drag-to-zoom
+    //       },
+    //       pinch: {
+    //         enabled: true, // Enable pinch-to-zoom for touch devices
+    //       },
+    //       mode: "x", // Allow zooming in the x-axis only
+    //     },
+    //   },
+    // },
     maintainAspectRatio: false, // Ensure the chart resizes properly
   };
 

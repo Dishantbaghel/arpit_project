@@ -415,7 +415,7 @@ const TestFilter = ({ leftFilterData, graphFilterHandler, recordData }) => {
         {activeIndex !== null && (
           <div
             className="z-10 absolute w-56 bg-white border-gray-300 shadow-2xl rounded-lg p-2 border-2"
-            style={{ left: "100%" }}
+            style={{ top: `${activeIndex * 55}px`, left: "100%" }}
             onMouseEnter={() => setActiveIndex(activeIndex)} // Keep modal open on hover
             onMouseLeave={() => setActiveIndex(null)} // Close modal when mouse leaves modal area
           >

@@ -32,21 +32,21 @@ const columns = [
     size: 200,
   }),
   columnHelper.accessor("quantityUnits", {
-    header: "Quantity_Unit",
+    header: "Quantity Unit",
     size: 150,
   }),
-  columnHelper.accessor("indainPort", {
-    header: "Indian_Ports",
+  columnHelper.accessor("indianPort", {
+    header: "Indian Ports",
     size: 150,
   }),
-  columnHelper.accessor("supplier", {
-    header: "Supplier",
-    size: 150,
-  }),
-  columnHelper.accessor("buyer", {
-    header: "Buyer",
-    size: 150,
-  }),
+  // columnHelper.accessor("supplier", {
+  //   header: "Supplier",
+  //   size: 150,
+  // }),
+  // columnHelper.accessor("buyer", {
+  //   header: "Buyer",
+  //   size: 150,
+  // }),
   columnHelper.accessor("currency", {
     header: "Currency",
     size: 150,
