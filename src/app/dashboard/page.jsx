@@ -38,9 +38,7 @@ import Filter from "@/components/Filter";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import RecordTable from "@/components/RecordTable";
-import HorizontalFilters from "@/components/HorizontalFilters";
-import BarChartWithTrendLine from "@/components/TrendLineChart";
-import TestFilter from "@/components/Test";
+import TestFilter from "@/components/TestFilter";
 
 // Dynamically import BarChart and disable SSR
 const BarChart = dynamic(() => import("../../components/Barchart"), {
