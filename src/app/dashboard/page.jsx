@@ -111,7 +111,11 @@ export default function Dashboard() {
 
         // console.log("DISHANT CHECK============", response.data.data);
 
-        const { metrics } = response.data.data || {};
+        const { data, metrics } = response.data.data || {};
+        console.log("API DATA=============", data);
+
+        setLeftFilterData(data);
+        
         if (metrics) {
           const dynamicGraphsData = Object.entries(metrics).map(
             ([key, value]) => {
