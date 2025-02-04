@@ -43,6 +43,10 @@ const columns = [
     header: "Currency",
     size: 150,
   }),
+  columnHelper.accessor("indianCompany", {
+    header: "Indian Company",
+    size: 150,
+  }),
   columnHelper.accessor("foreignCompany", {
     header: "Foreign Company",
     size: 150,
@@ -59,8 +63,8 @@ const csvConfig = mkConfig({
   useKeysAsHeaders: true,
 });
 
-const RecordTable = ({data}) => {
-  console.log("TABLE=======",data)
+const RecordTable = ({ data }) => {
+  console.log("TABLE=======", data);
   const handleExportRows = (rows) => {
     const rowData = rows.map((row) => row.original);
     const csv = generateCsv(csvConfig)(rowData);

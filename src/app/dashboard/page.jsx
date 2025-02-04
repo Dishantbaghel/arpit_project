@@ -284,7 +284,7 @@ export default function Dashboard() {
   }, []);
 
   const graphFilterHandler = (filteredData) => {
-    toast.success("function called");
+    // toast.success("function called");
     console.log("graphsData=============", graphsData);
     console.log("filteredData=============", filteredData);
     setGraphsData(filteredData);

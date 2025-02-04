@@ -4,7 +4,13 @@ import { IoIosSearch, IoMdClose } from "react-icons/io";
 import { FaAngleDoubleRight } from "react-icons/fa";
 import { Chip } from "@mui/material";
 
-const TestFilter = ({ leftFilterData, graphFilterHandler, recordData,setLeftFilterData,setLeftFilterData2 }) => {
+const TestFilter = ({
+  leftFilterData,
+  graphFilterHandler,
+  recordData,
+  setLeftFilterData,
+  setLeftFilterData2,
+}) => {
   console.log("LEFT FILTER==========", leftFilterData);
   const [searchValue, setSearchValue] = useState("");
   const [activeIndex, setActiveIndex] = useState(null);
@@ -26,6 +32,8 @@ const TestFilter = ({ leftFilterData, graphFilterHandler, recordData,setLeftFilt
     console.log("initialCheckboxes======", initialCheckboxes);
 
     setCheckboxes(initialCheckboxes);
+
+    testingFun(leftFilterData);
   }, [leftFilterData]);
 
   const handleCheckboxChange = (key, index) => {
@@ -33,17 +41,16 @@ const TestFilter = ({ leftFilterData, graphFilterHandler, recordData,setLeftFilt
       const updatedItems = prev[key]?.items.map((item, i) =>
         i === index ? { ...item, checked: !item.checked } : item
       );
-  
+
       const newState = {
         ...prev,
         [key]: { items: updatedItems },
       };
-  
+
       // (newState); // Call your function with the updated state
       return newState;
     });
   };
-  
 
   const handleSelectAllChange = (key) => {
     const allSelected = !checkboxes[key]?.selectAll;
@@ -105,7 +112,7 @@ const TestFilter = ({ leftFilterData, graphFilterHandler, recordData,setLeftFilt
     );
 
     console.log(filteredList);
-    setLeftFilterData2(filteredList)
+    setLeftFilterData2(filteredList);
     // console.log("list:::::::::::::::", filteredList, uncheckedItems);
     console.log("list:::::::::arrarr::::::", filteredList, recordData);
     return testingFun(filteredList);
@@ -365,7 +372,7 @@ const TestFilter = ({ leftFilterData, graphFilterHandler, recordData,setLeftFilt
         })
     );
     console.log("delete unchecked::::::::::", filteredList, list);
-    setLeftFilterData2(filteredList)
+    setLeftFilterData2(filteredList);
     return testingFun(filteredList);
   };
 
