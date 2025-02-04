@@ -21,24 +21,24 @@ import {
 import { useFormik } from "formik";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import DataCard from "@/components/DataCard";
 // import debounce from "lodash.debounce";
 import debounce from "lodash/debounce";
 import { toast } from "react-toastify";
 import Datepicker from "react-tailwindcss-datepicker";
-import axiosInstance from "@/utils/axiosInstance";
 import { format } from "date-fns";
+import axiosInstance from "@/utils/axiosInstance";
 import { validationSchema } from "@/utils/validationSchemas";
-
-import Accordion from "@/components/Accordion";
-import Table from "@/components/Table";
-import Filter from "@/components/Filter";
 
 // import BarChart from "@/components/Barchart";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+
+// COMPONENTS======
+import DataCard from "@/components/DataCard";
+import Accordion from "@/components/Accordion";
 import RecordTable from "@/components/RecordTable";
 import TestFilter from "@/components/TestFilter";
+import TestFilter2 from "@/components/TestFilter2";
 
 // Dynamically import BarChart and disable SSR
 const BarChart = dynamic(() => import("../../components/Barchart"), {
@@ -56,18 +56,22 @@ const chapters = [
 ];
 
 export default function Dashboard() {
+  const router = useRouter();
   const [showAllGraphs, setShowAllGraphs] = useState(false);
   const [dateDuration, setDateDuration] = useState(""); // for date duration
 
   // RECORD API=============
   const [recordData, setRecordData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
   const [recordLoading, setRecordLoading] = useState(false);
   const [recordError, setRecordError] = useState("");
   const [error, setError] = useState(null);
-  const router = useRouter();
   const [searchApiData, setSearchApiData] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
+
+  // =======
+  const [graphsData, setGraphsData] = useState([]);
+  const [leftFilterData, setLeftFilterData] = useState([]);
+  const [leftFilterData2, setLeftFilterData2] = useState([]);
 
   const {
     handleSubmit,
@@ -104,16 +108,20 @@ export default function Dashboard() {
             session: sessionId,
           },
         });
+        console.log("RECORD API DATA=============", response);
         setRecordData(response.data.data);
-        setFilteredData(response.data.data);
 
-        // console.log("DISHANT CHECK============", response.data.data);
+        const { data, metrics } = response?.data?.data || {};
 
-        const { data, metrics } = response.data.data || {};
-        console.log("API DATA=============", data);
+        if (data) {
+          const updatedLeftFilterData = data?.map((item) => ({
+            ...item,
+            checked: true,
+          }));
+          setLeftFilterData(updatedLeftFilterData);
+          setLeftFilterData2(updatedLeftFilterData);
+        }
 
-        setLeftFilterData(data);
-        
         if (metrics) {
           const dynamicGraphsData = Object.entries(metrics).map(
             ([key, value]) => {
@@ -216,10 +224,6 @@ export default function Dashboard() {
     },
   ];
 
-  const [graphsData, setGraphsData] = useState([]);
-
-  const [leftFilterData, setLeftFilterData] = useState([]);
-
   useEffect(() => {
     (async () => {
       try {
@@ -235,15 +239,19 @@ export default function Dashboard() {
             session: sessionId,
           },
         });
-
+        console.log("RECORD API DATA=============", response.data.data);
         setRecordData(response.data.data);
-        setFilteredData(response.data.data);
 
-        const { data, metrics } = response.data.data || {};
-        console.log("API DATA=============", data);
+        const { data, metrics } = response?.data?.data || {};
 
-        setLeftFilterData(data);
-
+        if (data) {
+          const updatedLeftFilterData = data?.map((item) => ({
+            ...item,
+            checked: true,
+          }));
+          setLeftFilterData(updatedLeftFilterData);
+          setLeftFilterData2(updatedLeftFilterData);
+        }
         if (metrics) {
           // Transform each array in metrics into graph-ready data
           const dynamicGraphsData = Object.entries(metrics).map(
@@ -557,9 +565,9 @@ export default function Dashboard() {
       ) : recordError ? (
         <div className="text-red-500 text-center">{recordError}</div>
       ) : (
-        filteredData?.data?.length > 0 && (
+        leftFilterData?.length > 0 && (
           <div className="space-y-6">
-            <DataCard />
+            {/* <DataCard /> */}
             {/* <div>
               <HorizontalFilters leftFilterData={leftFilterData} />
             </div> */}
@@ -573,7 +581,14 @@ export default function Dashboard() {
                   leftFilterData={leftFilterData}
                   graphFilterHandler={graphFilterHandler}
                   recordData={recordData}
+                  setLeftFilterData={setLeftFilterData}
+                  setLeftFilterData2={setLeftFilterData2}
                 />
+                {/* <TestFilter2
+                  leftFilterData={leftFilterData}
+                  graphFilterHandler={graphFilterHandler}
+                  recordData={recordData}
+                /> */}
               </div>
               {showAllGraphs ? (
                 <div>
@@ -637,10 +652,7 @@ export default function Dashboard() {
                       </div>
                     ))
                   ) : (
-                    <div>
-                      {/* <span className="loading loading-spinner loading-lg"></span> */}
-                      something went wrong
-                    </div>
+                    <div>something went wrong</div>
                   )}
                 </div>
               )}
@@ -648,7 +660,7 @@ export default function Dashboard() {
             {/* <BarChartWithTrendLine /> */}
             {/* <div>{recordData && <Table data={recordData?.data} />}</div> */}
             <div>
-              {filteredData && <RecordTable data={filteredData?.data} />}
+              {leftFilterData && <RecordTable data={leftFilterData2} />}
             </div>
           </div>
         )

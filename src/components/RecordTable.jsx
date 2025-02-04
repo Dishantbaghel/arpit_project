@@ -39,14 +39,6 @@ const columns = [
     header: "Indian Ports",
     size: 150,
   }),
-  // columnHelper.accessor("supplier", {
-  //   header: "Supplier",
-  //   size: 150,
-  // }),
-  // columnHelper.accessor("buyer", {
-  //   header: "Buyer",
-  //   size: 150,
-  // }),
   columnHelper.accessor("currency", {
     header: "Currency",
     size: 150,
@@ -68,6 +60,7 @@ const csvConfig = mkConfig({
 });
 
 const RecordTable = ({data}) => {
+  console.log("TABLE=======",data)
   const handleExportRows = (rows) => {
     const rowData = rows.map((row) => row.original);
     const csv = generateCsv(csvConfig)(rowData);
