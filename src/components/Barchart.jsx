@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -9,19 +9,32 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import zoomPlugin from "chartjs-plugin-zoom";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  zoomPlugin // Register the zoom plugin
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const BarChart = ({ data = [], label = "Default Label" }) => {
+  const chartRef = useRef(null);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const visibleBars = 5; // Number of bars visible at a time
+
+  // Set the min/max values for the x-axis dynamically
+  useEffect(() => {
+    const chart = chartRef.current;
+    if (chart) {
+      chart.options.scales.x.min = scrollPosition;
+      chart.options.scales.x.max = scrollPosition + visibleBars;
+      chart.update(); // Refresh chart with new range
+    }
+  }, [scrollPosition]);
+
+  const handleScroll = (event) => {
+    const delta = event.deltaY > 0 ? 1 : -1; // Scroll down: right, Scroll up: left
+    setScrollPosition((prev) => {
+      const newPos = prev + delta;
+      return Math.max(0, Math.min(newPos, data.length - visibleBars));
+    });
+  };
+
   const chartData = {
     labels: data.map((item) => item.label),
     datasets: [
@@ -36,40 +49,28 @@ const BarChart = ({ data = [], label = "Default Label" }) => {
   };
 
   const options = {
+    responsive: true,
+    maintainAspectRatio: false,
     scales: {
       x: {
-        beginAtZero: true,
+        type: "category",
+        min: scrollPosition,
+        max: scrollPosition + visibleBars,
       },
       y: {
         beginAtZero: true,
       },
     },
-    // plugins: {
-    //   zoom: {
-    //     pan: {
-    //       enabled: true, // Enable panning
-    //       mode: "x", // Allow panning in the x-axis only
-    //     },
-    //     zoom: {
-    //       wheel: {
-    //         enabled: true, // Enable zooming with the mouse wheel
-    //       },
-    //       drag: {
-    //         enabled: false, // Disable drag-to-zoom
-    //       },
-    //       pinch: {
-    //         enabled: true, // Enable pinch-to-zoom for touch devices
-    //       },
-    //       mode: "x", // Allow zooming in the x-axis only
-    //     },
-    //   },
-    // },
-    maintainAspectRatio: false, // Ensure the chart resizes properly
+    plugins: {
+      legend: {
+        display: true,
+      },
+    },
   };
 
   return (
-    <div style={{ width: "100%", height: "400px" }}>
-      <Bar data={chartData} options={options} />
+    <div style={{ width: "100%", height: "400px" }} onWheel={handleScroll}>
+      <Bar ref={chartRef} data={chartData} options={options} />
     </div>
   );
 };

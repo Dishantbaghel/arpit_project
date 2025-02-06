@@ -50,93 +50,102 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-        <Link href="/" className="btn btn-ghost text-xl">
-          LOGO
+        <Link href="/">
+          Chemys
         </Link>
       </div>
 
-      <div className="navbar-center hidden md:flex lg:flex">
-        <ul className="flex gap-10 px-1">
-          <li>
-            <Link
-              href="/"
-              className={`nav-link ${pathname === "/" ? "active" : ""}`}
-            >
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/dashboard"
-              className={`nav-link ${
-                pathname === "/dashboard" ? "active" : ""
-              }`}
-            >
-              Dashboard
-            </Link>
-          </li>
-          <li className="relative group">
-            <Link href="" className={`nav-link`}>
-              Resources
-            </Link>
-            <ul className="absolute z-10 left-0 mt-1 w-40 bg-blue-900 border rounded-md shadow-xl hidden group-hover:block">
-              <li>
-                <Link
-                  href="/countries"
-                  className="block px-4 py-2 hover:bg-blue-800 rounded-md"
-                >
-                  Countries
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/indian-ports"
-                  className="block px-4 py-2 hover:bg-blue-800"
-                >
-                  Indian Ports
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/hs-codes"
-                  className="block px-4 py-2 hover:bg-blue-800 rounded-md"
-                >
-                  HS Codes
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/converter"
-                  // className={`nav-link ${
-                  //   pathname === "/converter" ? "active" : ""
-                  // }`}
-                  className="block px-4 py-2 hover:bg-blue-800 rounded-md"
-                >
-                  Converter
-                </Link>
-              </li>
-            </ul>
-          </li>
+      <div className="navbar-center flex gap-12">
+        <div className="navbar-center hidden md:flex lg:flex">
+          <ul className="flex gap-10 px-1">
+            <li>
+              <Link
+                href="/"
+                className={`nav-link ${pathname === "/" ? "active" : ""}`}
+              >
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/dashboard"
+                className={`nav-link ${
+                  pathname === "/dashboard" ? "active" : ""
+                }`}
+              >
+                Dashboard
+              </Link>
+            </li>
+            <li className="relative group">
+              <Link href="" className={`nav-link`}>
+                Resources
+              </Link>
+              <ul className="absolute z-10 left-0 mt-1 w-40 bg-blue-900 border rounded-md shadow-xl hidden group-hover:block">
+                <li>
+                  <Link
+                    href="/countries"
+                    className="block px-4 py-2 hover:bg-blue-800 rounded-md"
+                  >
+                    Countries
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/indian-ports"
+                    className="block px-4 py-2 hover:bg-blue-800"
+                  >
+                    Indian Ports
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/hs-codes"
+                    className="block px-4 py-2 hover:bg-blue-800 rounded-md"
+                  >
+                    HS Codes
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/converter"
+                    // className={`nav-link ${
+                    //   pathname === "/converter" ? "active" : ""
+                    // }`}
+                    className="block px-4 py-2 hover:bg-blue-800 rounded-md"
+                  >
+                    Converter
+                  </Link>
+                </li>
+              </ul>
+            </li>
 
-          <li>
-            <Link
-              href="/about-us"
-              className={`nav-link ${pathname === "/about-us" ? "active" : ""}`}
-            >
-              About Us
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/contact-us"
-              className={`nav-link ${
-                pathname === "/contact-us" ? "active" : ""
-              }`}
-            >
-              Contact Us
-            </Link>
-          </li>
-        </ul>
+            <li>
+              <Link
+                href="/about-us"
+                className={`nav-link ${
+                  pathname === "/about-us" ? "active" : ""
+                }`}
+              >
+                About Us
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/contact-us"
+                className={`nav-link ${
+                  pathname === "/contact-us" ? "active" : ""
+                }`}
+              >
+                Contact Us
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        <div className="navbar-center flex gap-5 text-xl">
+          <span>EUR 1</span>
+          <span>USD 1.01</span>
+        </div>
       </div>
 
       <div className="navbar-end flex gap-8 ">

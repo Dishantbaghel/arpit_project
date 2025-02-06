@@ -567,7 +567,7 @@ export default function Dashboard() {
       ) : (
         leftFilterData?.length > 0 && (
           <div className="space-y-6">
-            {/* <DataCard /> */}
+            <DataCard />
             {/* <div>
               <HorizontalFilters leftFilterData={leftFilterData} />
             </div> */}

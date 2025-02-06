@@ -5,7 +5,9 @@ const staticData = [
   { title: "Volume", value: 343.5, imgs: "/volume.png" },
   { title: "Value", value: 443, imgs: "/currency.png" },
   { title: "Avg Price", value: 54324, imgs: "/average.png" },
-  { title: "Data Records", value: 75667, imgs: "/folder.png" },
+  { title: "Shipment Count", value: 75667, imgs: "/folder.png" },
+  { title: "Indian Companies", value: 75667, imgs: "/folder.png" },
+  { title: "Foreign Companies", value: 75667, imgs: "/folder.png" },
 ];
 
 const DataCard = () => {
@@ -45,20 +47,22 @@ const DataCard = () => {
     <div className="flex gap-5">
       {staticData.map((item, i) => (
         <div key={i} className="card bg-base-100 w-96 shadow-xl rounded-lg">
-          <div className="p-3 flex justify-between">
-            <div>
-              <h3 className="card-title">{item.title}:</h3>
-              <h3 className="text-[#008000] text-3xl font-bold">
+          <div className="p-2">
+            <h3 className="card-title text-sm">{item.title}:</h3>
+            <div className="flex justify-between text-center">
+              <h3 className="text-[#008000] text-md font-bold">
                 {animatedValues[i]}
               </h3>
+              <div>
+                <Image
+                  src={item.imgs}
+                  alt={item.title}
+                  title={item.title}
+                  width={20}
+                  height={5}
+                />
+              </div>
             </div>
-            <Image
-              src={item.imgs}
-              alt={item.title}
-              title={item.title}
-              width={60}
-              height={60}
-            />
           </div>
         </div>
       ))}
