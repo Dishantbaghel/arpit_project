@@ -9,7 +9,6 @@ export default function IndianPorts() {
       </h1>
       <div className="p-10">
         <IndianPortTable />
-        {/* <IndianPortTable /> */}
       </div>
     </div>
   );

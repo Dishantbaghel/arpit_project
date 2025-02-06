@@ -55,7 +55,7 @@ const Navbar = () => {
         </Link>
       </div>
 
-      <div className="navbar-center hidden lg:flex">
+      <div className="navbar-center hidden md:flex lg:flex">
         <ul className="flex gap-10 px-1">
           <li>
             <Link
@@ -75,6 +75,49 @@ const Navbar = () => {
               Dashboard
             </Link>
           </li>
+          <li className="relative group">
+            <Link href="" className={`nav-link`}>
+              Resources
+            </Link>
+            <ul className="absolute z-10 left-0 mt-1 w-40 bg-blue-900 border rounded-md shadow-xl hidden group-hover:block">
+              <li>
+                <Link
+                  href="/countries"
+                  className="block px-4 py-2 hover:bg-blue-800 rounded-md"
+                >
+                  Countries
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/indian-ports"
+                  className="block px-4 py-2 hover:bg-blue-800"
+                >
+                  Indian Ports
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/hs-codes"
+                  className="block px-4 py-2 hover:bg-blue-800 rounded-md"
+                >
+                  HS Codes
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/converter"
+                  // className={`nav-link ${
+                  //   pathname === "/converter" ? "active" : ""
+                  // }`}
+                  className="block px-4 py-2 hover:bg-blue-800 rounded-md"
+                >
+                  Converter
+                </Link>
+              </li>
+            </ul>
+          </li>
+
           <li>
             <Link
               href="/about-us"
@@ -91,34 +134,6 @@ const Navbar = () => {
               }`}
             >
               Contact Us
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/converter"
-              className={`nav-link ${
-                pathname === "/converter" ? "active" : ""
-              }`}
-            >
-              Converter
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/hsCode"
-              className={`nav-link ${pathname === "/hsCode" ? "active" : ""}`}
-            >
-              HS Code
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/indian-ports"
-              className={`nav-link ${
-                pathname === "/indian-ports" ? "active" : ""
-              }`}
-            >
-              Indian Ports
             </Link>
           </li>
         </ul>
