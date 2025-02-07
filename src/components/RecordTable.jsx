@@ -64,7 +64,7 @@ const csvConfig = mkConfig({
 });
 
 const RecordTable = ({ data }) => {
-  console.log("TABLE=======", data);
+  // console.log("TABLE=======", data);
   const handleExportRows = (rows) => {
     const rowData = rows.map((row) => row.original);
     const csv = generateCsv(csvConfig)(rowData);

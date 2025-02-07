@@ -38,7 +38,6 @@ import DataCard from "@/components/DataCard";
 import Accordion from "@/components/Accordion";
 import RecordTable from "@/components/RecordTable";
 import TestFilter from "@/components/TestFilter";
-import TestFilter2 from "@/components/TestFilter2";
 
 // Dynamically import BarChart and disable SSR
 const BarChart = dynamic(() => import("../../components/Barchart"), {
@@ -72,6 +71,8 @@ export default function Dashboard() {
   const [graphsData, setGraphsData] = useState([]);
   const [leftFilterData, setLeftFilterData] = useState([]);
   const [leftFilterData2, setLeftFilterData2] = useState([]);
+
+  const [totalData, setTotalData] = useState(null);
 
   const {
     handleSubmit,
@@ -284,10 +285,9 @@ export default function Dashboard() {
   }, []);
 
   const graphFilterHandler = (filteredData) => {
-    // toast.success("function called");
-    console.log("graphsData=============", graphsData);
     console.log("filteredData=============", filteredData);
-    setGraphsData(filteredData);
+    setGraphsData(filteredData.data);
+    setTotalData(filteredData);
   };
 
   const searchOptions = [
@@ -567,7 +567,7 @@ export default function Dashboard() {
       ) : (
         leftFilterData?.length > 0 && (
           <div className="space-y-6">
-            <DataCard />
+            {totalData && <DataCard totalData={totalData} />}
             {/* <div>
               <HorizontalFilters leftFilterData={leftFilterData} />
             </div> */}
@@ -584,11 +584,6 @@ export default function Dashboard() {
                   setLeftFilterData={setLeftFilterData}
                   setLeftFilterData2={setLeftFilterData2}
                 />
-                {/* <TestFilter2
-                  leftFilterData={leftFilterData}
-                  graphFilterHandler={graphFilterHandler}
-                  recordData={recordData}
-                /> */}
               </div>
               {showAllGraphs ? (
                 <div>

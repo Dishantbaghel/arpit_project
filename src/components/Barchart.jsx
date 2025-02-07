@@ -69,7 +69,7 @@ const BarChart = ({ data = [], label = "Default Label" }) => {
   };
 
   return (
-    <div style={{ width: "100%", height: "400px" }} onWheel={handleScroll}>
+    <div style={{ width: "100%", height: "300px" }} onWheel={handleScroll}>
       <Bar ref={chartRef} data={chartData} options={options} />
     </div>
   );

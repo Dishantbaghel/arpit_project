@@ -113,8 +113,6 @@ const TestFilter = ({
 
     console.log(filteredList);
     setLeftFilterData2(filteredList);
-    // console.log("list:::::::::::::::", filteredList, uncheckedItems);
-    console.log("list:::::::::arrarr::::::", filteredList, recordData);
     return testingFun(filteredList);
     // let result = {
     //   topBuyerByQuantity: {},
@@ -246,68 +244,46 @@ const TestFilter = ({
       topCountryByValue: {},
       totalQuantity: 0,
       totalValue: 0,
+      uniqueIndianCompanies: new Set(),
+      uniqueForeignCompanies: new Set(),
     };
 
     arr.forEach((item) => {
+      // Track unique companies
+      result.uniqueIndianCompanies.add(item.indianCompany);
+      result.uniqueForeignCompanies.add(item.foreignCompany);
+
       // Aggregate buyers by quantity and value
-      if (result.topBuyerByQuantity[item.indianCompany]) {
-        result.topBuyerByQuantity[item.indianCompany] += parseFloat(
-          item.quantity
-        );
-        result.topBuyerByValue[item.indianCompany] +=
-          parseFloat(item.quantity) * parseFloat(item.unitPrice);
-      } else {
-        result.topBuyerByQuantity[item.indianCompany] = parseFloat(
-          item.quantity
-        );
-        result.topBuyerByValue[item.indianCompany] =
-          parseFloat(item.quantity) * parseFloat(item.unitPrice);
-      }
+      result.topBuyerByQuantity[item.indianCompany] =
+        (result.topBuyerByQuantity[item.indianCompany] || 0) +
+        parseFloat(item.quantity);
+      result.topBuyerByValue[item.indianCompany] =
+        (result.topBuyerByValue[item.indianCompany] || 0) +
+        parseFloat(item.quantity) * parseFloat(item.unitPrice);
 
       // Aggregate suppliers by quantity and value
-      if (result.topSupplierByQuantity[item.foreignCompany]) {
-        result.topSupplierByQuantity[item.foreignCompany] += parseFloat(
-          item.quantity
-        );
-        result.topSupplierByValue[item.foreignCompany] +=
-          parseFloat(item.quantity) * parseFloat(item.unitPrice);
-      } else {
-        result.topSupplierByQuantity[item.foreignCompany] = parseFloat(
-          item.quantity
-        );
-        result.topSupplierByValue[item.foreignCompany] =
-          parseFloat(item.quantity) * parseFloat(item.unitPrice);
-      }
+      result.topSupplierByQuantity[item.foreignCompany] =
+        (result.topSupplierByQuantity[item.foreignCompany] || 0) +
+        parseFloat(item.quantity);
+      result.topSupplierByValue[item.foreignCompany] =
+        (result.topSupplierByValue[item.foreignCompany] || 0) +
+        parseFloat(item.quantity) * parseFloat(item.unitPrice);
 
       // Aggregate Indian ports by quantity and value
-      if (result.topIndianPortByQuantity[item.indianPort]) {
-        result.topIndianPortByQuantity[item.indianPort] += parseFloat(
-          item.quantity
-        );
-        result.topIndianPortByValue[item.indianPort] +=
-          parseFloat(item.quantity) * parseFloat(item.unitPrice);
-      } else {
-        result.topIndianPortByQuantity[item.indianPort] = parseFloat(
-          item.quantity
-        );
-        result.topIndianPortByValue[item.indianPort] =
-          parseFloat(item.quantity) * parseFloat(item.unitPrice);
-      }
+      result.topIndianPortByQuantity[item.indianPort] =
+        (result.topIndianPortByQuantity[item.indianPort] || 0) +
+        parseFloat(item.quantity);
+      result.topIndianPortByValue[item.indianPort] =
+        (result.topIndianPortByValue[item.indianPort] || 0) +
+        parseFloat(item.quantity) * parseFloat(item.unitPrice);
 
       // Aggregate countries by quantity and value
-      if (result.topCountryByQuantity[item.foreignCountry]) {
-        result.topCountryByQuantity[item.foreignCountry] += parseFloat(
-          item.quantity
-        );
-        result.topCountryByValue[item.foreignCountry] +=
-          parseFloat(item.quantity) * parseFloat(item.unitPrice);
-      } else {
-        result.topCountryByQuantity[item.foreignCountry] = parseFloat(
-          item.quantity
-        );
-        result.topCountryByValue[item.foreignCountry] =
-          parseFloat(item.quantity) * parseFloat(item.unitPrice);
-      }
+      result.topCountryByQuantity[item.foreignCountry] =
+        (result.topCountryByQuantity[item.foreignCountry] || 0) +
+        parseFloat(item.quantity);
+      result.topCountryByValue[item.foreignCountry] =
+        (result.topCountryByValue[item.foreignCountry] || 0) +
+        parseFloat(item.quantity) * parseFloat(item.unitPrice);
 
       // Update total quantity and value
       result.totalQuantity += parseFloat(item.quantity);
@@ -316,40 +292,46 @@ const TestFilter = ({
     });
 
     // Convert the aggregated data into the API response format
-    const transformToAPIFormat = (data, key) => {
-      const formattedData = Object.keys(data)
-        .map((label) => ({
-          label,
-          value: data[label],
-        }))
-        .sort((a, b) => b.value - a.value); // Sort by value in descending order
+    const transformToAPIFormat = (data, key) => ({
+      key,
+      data: Object.keys(data)
+        .map((label) => ({ label, value: data[label] }))
+        .sort((a, b) => b.value - a.value), // Sort by value in descending order
+      label: key.replace(/([A-Z])/g, " $1").trim(), // Format the key for display
+    });
 
-      return {
-        key,
-        data: formattedData,
-        label: key.replace(/([A-Z])/g, " $1").trim(), // Format the key for display
-      };
+    const apiResponse = {
+      data: [
+        transformToAPIFormat(result.topBuyerByQuantity, "topBuyerByQuantity"),
+        transformToAPIFormat(
+          result.topSupplierByQuantity,
+          "topSupplierByQuantity"
+        ),
+        transformToAPIFormat(
+          result.topIndianPortByQuantity,
+          "topIndianPortByQuantity"
+        ),
+        transformToAPIFormat(
+          result.topCountryByQuantity,
+          "topCountryByQuantity"
+        ),
+        transformToAPIFormat(result.topBuyerByValue, "topBuyerByValue"),
+        transformToAPIFormat(result.topSupplierByValue, "topSupplierByValue"),
+        transformToAPIFormat(
+          result.topIndianPortByValue,
+          "topIndianPortByValue"
+        ),
+        transformToAPIFormat(result.topCountryByValue, "topCountryByValue"),
+      ],
+      totalIndianCompanies: result.uniqueIndianCompanies.size,
+      totalForeignCompanies: result.uniqueForeignCompanies.size,
+      totalQuantity: result.totalQuantity,
+      totalValue: result.totalValue,
+      shipmentCount: arr.length,
     };
 
-    const apiResponse = [
-      transformToAPIFormat(result.topBuyerByQuantity, "topBuyerByQuantity"),
-      transformToAPIFormat(
-        result.topSupplierByQuantity,
-        "topSupplierByQuantity"
-      ),
-      transformToAPIFormat(
-        result.topIndianPortByQuantity,
-        "topIndianPortByQuantity"
-      ),
-      transformToAPIFormat(result.topCountryByQuantity, "topCountryByQuantity"),
-      transformToAPIFormat(result.topBuyerByValue, "topBuyerByValue"),
-      transformToAPIFormat(result.topSupplierByValue, "topSupplierByValue"),
-      transformToAPIFormat(result.topIndianPortByValue, "topIndianPortByValue"),
-      transformToAPIFormat(result.topCountryByValue, "topCountryByValue"),
-    ];
-
-    // Assuming graphFilterHandler is a function that handles the API response
     graphFilterHandler(apiResponse);
+
     return apiResponse;
   };
 
@@ -376,7 +358,7 @@ const TestFilter = ({
     return testingFun(filteredList);
   };
 
-  console.log("checkboxes==========", checkboxes);
+  // console.log("checkboxes==========", checkboxes);
 
   const uncheckedItems = Object.entries(checkboxes).flatMap(([key, data]) =>
     data.items.filter((item) => !item.checked).map((item) => ({ key, ...item }))
@@ -455,7 +437,7 @@ const TestFilter = ({
                         <span>Select All</span>
                       </label>
                       {/* Render Unique Values for the Active Key */}
-                      <div className="flex flex-col gap-1">
+                      <div className="flex flex-col gap-1 max-h-72 overflow-y-auto">
                         {uniqueValues(uniqueKeys[index])
                           .filter((value) =>
                             String(value)
