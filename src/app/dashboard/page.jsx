@@ -38,6 +38,7 @@ import DataCard from "@/components/DataCard";
 import Accordion from "@/components/Accordion";
 import RecordTable from "@/components/RecordTable";
 import TestFilter from "@/components/TestFilter";
+import TestBarChart from "@/components/TestBarchart";
 
 // Dynamically import BarChart and disable SSR
 const BarChart = dynamic(() => import("../../components/Barchart"), {
@@ -74,6 +75,9 @@ export default function Dashboard() {
 
   const [totalData, setTotalData] = useState(null);
 
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const datePickerRef = useRef(null);
+
   const {
     handleSubmit,
     values,
@@ -86,6 +90,8 @@ export default function Dashboard() {
     initialValues: {
       info: "import",
       dataType: "",
+      startDate: "",
+      endDate: "",
       duration: "",
       chapter: "",
       searchType: "",
@@ -209,22 +215,6 @@ export default function Dashboard() {
     []
   );
 
-  const customShortcuts = [
-    {
-      label: "1 Year",
-      getValue: () => {
-        const today = new Date();
-        const oneYearAgo = new Date();
-        oneYearAgo.setFullYear(today.getFullYear() - 1);
-
-        return {
-          startDate: oneYearAgo,
-          endDate: today,
-        };
-      },
-    },
-  ];
-
   useEffect(() => {
     (async () => {
       try {
@@ -305,6 +295,81 @@ export default function Dashboard() {
     },
   ];
 
+  const formatDate = (date) => {
+    if (!date) return "";
+    const [year, month, day] = date.split("-");
+    return `${day}/${month}/${year.slice(-2)}`;
+  };
+
+  // Update the "duration" field when startDate or endDate changes
+  const handleDateChange = (field, value) => {
+    setFieldValue(field, value);
+
+    const { startDate, endDate } = {
+      ...values,
+      [field]: value,
+    };
+
+    if (startDate && endDate) {
+      const formattedStartDate = formatDate(startDate);
+      const formattedEndDate = formatDate(endDate);
+      setFieldValue("duration", `${formattedStartDate} - ${formattedEndDate}`);
+    }
+  };
+
+  useEffect(() => {
+    if (!values.startDate && !values.endDate) {
+      const today = new Date();
+      const lastThreeYears = new Date();
+      lastThreeYears.setFullYear(today.getFullYear() - 3); // Get last 3 years' date
+
+      const formattedStartDate = lastThreeYears
+        .toLocaleDateString("en-GB")
+        .split("/")
+        .join("/");
+      const formattedEndDate = today
+        .toLocaleDateString("en-GB")
+        .split("/")
+        .join("/");
+
+      setFieldValue("startDate", lastThreeYears.toISOString().split("T")[0]);
+      setFieldValue("endDate", today.toISOString().split("T")[0]);
+      setFieldValue("duration", `${formattedStartDate}-${formattedEndDate}`);
+    }
+  }, [setFieldValue, values.startDate, values.endDate]);
+
+  useEffect(() => {
+    if (values.startDate && values.endDate) {
+      const formattedStartDate = new Date(values.startDate)
+        .toLocaleDateString("en-GB")
+        .split("/")
+        .join("/");
+      const formattedEndDate = new Date(values.endDate)
+        .toLocaleDateString("en-GB")
+        .split("/")
+        .join("/");
+
+      setFieldValue("duration", `${formattedStartDate}-${formattedEndDate}`);
+    }
+  }, [values.startDate, values.endDate, setFieldValue]);
+
+  // Close date picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        datePickerRef.current &&
+        !datePickerRef.current.contains(event.target)
+      ) {
+        setShowDatePicker(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="px-3 py-6 space-y-6 bg-gray-100">
       <form
@@ -354,7 +419,8 @@ export default function Dashboard() {
               </ToggleButton>
             </ToggleButtonGroup>
           </div>
-          <div className="w-full">
+          {/* DATE======= */}
+          {/* <div className="w-full">
             <Datepicker
               // value={values.duration}
               value={dateDuration}
@@ -382,8 +448,49 @@ export default function Dashboard() {
               //   setFieldValue("duration", newValue);
               // }}
             />
+          </div> */}
+
+          <div
+            className="w-full bg-white relative rounded border border-gray-300"
+            ref={datePickerRef}
+          >
+            <div
+              className="text-gray-700 font-medium p-2 cursor-pointer"
+              onClick={() => setShowDatePicker(!showDatePicker)}
+            >
+              {values.startDate && values.endDate
+                ? `${formatDate(values.startDate)} - ${formatDate(
+                    values.endDate
+                  )}`
+                : "Select Date Range"}
+            </div>
+
+            {/* Date Picker Fields */}
+            {showDatePicker && (
+              <div className="w-full bg-white p-4 flex flex-col gap-4 absolute z-10 top-12 rounded shadow-md">
+                <div className="flex flex-col gap-2">
+                  <label>Start Date</label>
+                  <input
+                    type="date"
+                    className="p-2 rounded bg-gray-100"
+                    value={values.startDate}
+                    onChange={(e) => setFieldValue("startDate", e.target.value)}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label>End Date</label>
+                  <input
+                    type="date"
+                    className="p-2 rounded bg-gray-100"
+                    value={values.endDate}
+                    onChange={(e) => setFieldValue("endDate", e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
+          {/* DATA TYPE======= */}
           <div className="w-full">
             <FormControl
               className="w-full"
@@ -583,8 +690,12 @@ export default function Dashboard() {
                   recordData={recordData}
                   setLeftFilterData={setLeftFilterData}
                   setLeftFilterData2={setLeftFilterData2}
+                  dataType={values.dataType}
+                  searchType={values.searchType}
+                  info={values.info}
                 />
               </div>
+
               {showAllGraphs ? (
                 <div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -639,7 +750,13 @@ export default function Dashboard() {
                       >
                         <div className="p-3">
                           {graph.data && graph.data.length > 0 ? (
-                            <BarChart data={graph.data} label={graph.label} />
+                            <>
+                              <TestBarChart
+                                data={graph.data}
+                                label={graph.label}
+                              />
+                              {/* <BarChart data={graph.data} label={graph.label} /> */}
+                            </>
                           ) : (
                             <p>No data available for the chart</p>
                           )}

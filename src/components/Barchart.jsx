@@ -13,19 +13,21 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const BarChart = ({ data = [], label = "Default Label" }) => {
+  console.log("INSIDE GRAPH===========",data)
   const chartRef = useRef(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const visibleBars = 5; // Number of bars visible at a time
 
   // Set the min/max values for the x-axis dynamically
-  useEffect(() => {
-    const chart = chartRef.current;
-    if (chart) {
-      chart.options.scales.x.min = scrollPosition;
-      chart.options.scales.x.max = scrollPosition + visibleBars;
-      chart.update(); // Refresh chart with new range
-    }
-  }, [scrollPosition]);
+
+  // useEffect(() => {
+  //   const chart = chartRef.current;
+  //   if (chart) {
+  //     chart.options.scales.x.min = scrollPosition;
+  //     chart.options.scales.x.max = scrollPosition + visibleBars;
+  //     chart.update(); // Refresh chart with new range
+  //   }
+  // }, [scrollPosition]);
 
   const handleScroll = (event) => {
     const delta = event.deltaY > 0 ? 1 : -1; // Scroll down: right, Scroll up: left
@@ -47,6 +49,8 @@ const BarChart = ({ data = [], label = "Default Label" }) => {
       },
     ],
   };
+
+  console.log("DISHANT*****************",chartData)
 
   const options = {
     responsive: true,
@@ -70,7 +74,7 @@ const BarChart = ({ data = [], label = "Default Label" }) => {
 
   return (
     <div style={{ width: "100%", height: "300px" }} onWheel={handleScroll}>
-      <Bar ref={chartRef} data={chartData} options={options} />
+      <Bar  data={chartData} options={options} />
     </div>
   );
 };

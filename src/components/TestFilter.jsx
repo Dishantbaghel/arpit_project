@@ -10,6 +10,9 @@ const TestFilter = ({
   recordData,
   setLeftFilterData,
   setLeftFilterData2,
+  dataType,
+  searchType,
+  info,
 }) => {
   console.log("LEFT FILTER==========", leftFilterData);
   const [searchValue, setSearchValue] = useState("");
@@ -234,40 +237,115 @@ const TestFilter = ({
 
   const testingFun = (arr) => {
     let result = {
+      topHScodeByQuantity: {},
+      topHScodeByValue: {},
+      HScodeShipmentCount: {},
+
+      topProductByQuantity: {},
+      topProductByValue: {},
+      productShipmentCount: {},
+      topYearsByQuantity: {},
+      topYearsByValue: {},
+
       topBuyerByQuantity: {},
-      topSupplierByQuantity: {},
-      topIndianPortByQuantity: {},
-      topCountryByQuantity: {},
       topBuyerByValue: {},
+
+      topSupplierByQuantity: {},
       topSupplierByValue: {},
+
+      topIndianPortByQuantity: {},
       topIndianPortByValue: {},
+
+      topCountryByQuantity: {},
       topCountryByValue: {},
+
+      yearShipmentCount: {},
+      buyerShipmentCount: {},
+      supplierShipmentCount: {},
+      indianPortShipmentCount: {},
+      countryShipmentCount: {},
+
       totalQuantity: 0,
       totalValue: 0,
+
       uniqueIndianCompanies: new Set(),
       uniqueForeignCompanies: new Set(),
     };
 
+    if (dataType === "cleaned data") {
+      result.topProductByQuantity = {};
+      result.topProductByValue = {};
+      result.productShipmentCount = {};
+    }
+
     arr.forEach((item) => {
+      const year = item.dateOfShipment.split("-")[0];
+
       // Track unique companies
       result.uniqueIndianCompanies.add(item.indianCompany);
       result.uniqueForeignCompanies.add(item.foreignCompany);
 
-      // Aggregate buyers by quantity and value
-      result.topBuyerByQuantity[item.indianCompany] =
-        (result.topBuyerByQuantity[item.indianCompany] || 0) +
-        parseFloat(item.quantity);
-      result.topBuyerByValue[item.indianCompany] =
-        (result.topBuyerByValue[item.indianCompany] || 0) +
+      // Aggregate Year by quantity and value
+      result.topYearsByQuantity[year] =
+        (result.topYearsByQuantity[year] || 0) + parseFloat(item.quantity);
+      result.topYearsByValue[year] =
+        (result.topYearsByValue[year] || 0) +
         parseFloat(item.quantity) * parseFloat(item.unitPrice);
 
-      // Aggregate suppliers by quantity and value
-      result.topSupplierByQuantity[item.foreignCompany] =
-        (result.topSupplierByQuantity[item.foreignCompany] || 0) +
-        parseFloat(item.quantity);
-      result.topSupplierByValue[item.foreignCompany] =
-        (result.topSupplierByValue[item.foreignCompany] || 0) +
-        parseFloat(item.quantity) * parseFloat(item.unitPrice);
+      console.log("ARPIT======", info, "++++", searchType);
+
+      if (info === "import") {
+        // Aggregate buyers by quantity and value
+        result.topBuyerByQuantity[item.indianCompany] =
+          (result.topBuyerByQuantity[item.indianCompany] || 0) +
+          parseFloat(item.quantity);
+        result.topBuyerByValue[item.indianCompany] =
+          (result.topBuyerByValue[item.indianCompany] || 0) +
+          parseFloat(item.quantity) * parseFloat(item.unitPrice);
+        //  Aggregate suppliers by quantity and value
+        result.topSupplierByQuantity[item.foreignCompany] =
+          (result.topSupplierByQuantity[item.foreignCompany] || 0) +
+          parseFloat(item.quantity);
+        result.topSupplierByValue[item.foreignCompany] =
+          (result.topSupplierByValue[item.foreignCompany] || 0) +
+          parseFloat(item.quantity) * parseFloat(item.unitPrice);
+      }
+      //  else {
+      //   // Aggregate suppliers by quantity and value
+      //   result.topSupplierByQuantity[item.indianCompany] =
+      //     (result.topSupplierByQuantity[item.indianCompany] || 0) +
+      //     parseFloat(item.quantity);
+      //   result.topSupplierByValue[item.indianCompany] =
+      //     (result.topSupplierByValue[item.indianCompany] || 0) +
+      //     parseFloat(item.quantity) * parseFloat(item.unitPrice);
+      // }
+
+      if (info === "export") {
+        // Aggregate buyers by quantity and value
+        result.topBuyerByQuantity[item.foreignCompany] =
+          (result.topBuyerByQuantity[item.foreignCompany] || 0) +
+          parseFloat(item.quantity);
+        result.topBuyerByValue[item.foreignCompany] =
+          (result.topBuyerByValue[item.foreignCompany] || 0) +
+          parseFloat(item.quantity) * parseFloat(item.unitPrice);
+
+        // Aggregate suppliers by quantity and value
+        result.topSupplierByQuantity[item.indianCompany] =
+          (result.topSupplierByQuantity[item.indianCompany] || 0) +
+          parseFloat(item.quantity);
+        result.topSupplierByValue[item.indianCompany] =
+          (result.topSupplierByValue[item.indianCompany] || 0) +
+          parseFloat(item.quantity) * parseFloat(item.unitPrice);
+      }
+      //  else {
+      //   // Aggregate suppliers by quantity and value
+      //   result.topSupplierByQuantity[item.foreignCompany] =
+      //     (result.topSupplierByQuantity[item.foreignCompany] || 0) +
+      //     parseFloat(item.quantity);
+      //   result.topSupplierByValue[item.foreignCompany] =
+      //     (result.topSupplierByValue[item.foreignCompany] || 0) +
+      //     parseFloat(item.quantity) * parseFloat(item.unitPrice);
+      // }
 
       // Aggregate Indian ports by quantity and value
       result.topIndianPortByQuantity[item.indianPort] =
@@ -285,43 +363,129 @@ const TestFilter = ({
         (result.topCountryByValue[item.foreignCountry] || 0) +
         parseFloat(item.quantity) * parseFloat(item.unitPrice);
 
+      // Count shipments for each category
+      result.yearShipmentCount[year] =
+        (result.yearShipmentCount[year] || 0) + 1;
+
+      result.buyerShipmentCount[item.indianCompany] =
+        (result.buyerShipmentCount[item.indianCompany] || 0) + 1;
+      result.supplierShipmentCount[item.foreignCompany] =
+        (result.supplierShipmentCount[item.foreignCompany] || 0) + 1;
+      result.indianPortShipmentCount[item.indianPort] =
+        (result.indianPortShipmentCount[item.indianPort] || 0) + 1;
+      result.countryShipmentCount[item.foreignCountry] =
+        (result.countryShipmentCount[item.foreignCountry] || 0) + 1;
+
+      if (dataType === "cleaned data") {
+        // Aggregate Product by quantity and value only if dataType is "cleaned data"
+        result.topProductByQuantity[item.productName] =
+          (result.topProductByQuantity[item.productName] || 0) +
+          parseFloat(item.quantity);
+        result.topProductByValue[item.productName] =
+          (result.topProductByValue[item.productName] || 0) +
+          parseFloat(item.quantity) * parseFloat(item.unitPrice);
+
+        result.productShipmentCount[item.productName] =
+          (result.productShipmentCount[item.productName] || 0) + 1;
+      }
+
+      // Aggregate HScode by quantity and value only if dataType is "cleaned data"
+      result.topHScodeByQuantity[item.HS_Code] =
+        (result.topHScodeByQuantity[item.HS_Code] || 0) +
+        parseFloat(item.quantity);
+      result.topHScodeByValue[item.HS_Code] =
+        (result.topHScodeByValue[item.HS_Code] || 0) +
+        parseFloat(item.quantity) * parseFloat(item.unitPrice);
+
+      result.HScodeShipmentCount[item.HS_Code] =
+        (result.HScodeShipmentCount[item.HS_Code] || 0) + 1;
+
       // Update total quantity and value
       result.totalQuantity += parseFloat(item.quantity);
       result.totalValue +=
         parseFloat(item.quantity) * parseFloat(item.unitPrice);
     });
 
-    // Convert the aggregated data into the API response format
-    const transformToAPIFormat = (data, key) => ({
+    // Function to transform data to API format and include totalCount
+    const transformToAPIFormat = (data, key, countData) => ({
       key,
       data: Object.keys(data)
-        .map((label) => ({ label, value: data[label] }))
+        .map((label) => ({
+          label,
+          value: data[label],
+          totalCount: countData[label] || 0, // Add totalCount
+        }))
         .sort((a, b) => b.value - a.value), // Sort by value in descending order
       label: key.replace(/([A-Z])/g, " $1").trim(), // Format the key for display
     });
 
     const apiResponse = {
       data: [
-        transformToAPIFormat(result.topBuyerByQuantity, "topBuyerByQuantity"),
+        transformToAPIFormat(
+          result.topYearsByQuantity,
+          "topYearsByQuantity",
+          result.yearShipmentCount
+        ),
+        transformToAPIFormat(
+          result.topYearsByValue,
+          "topYearsByValue",
+          result.yearShipmentCount
+        ),
+
+        transformToAPIFormat(
+          result.topBuyerByQuantity,
+          "topBuyerByQuantity",
+          result.buyerShipmentCount
+        ),
+        transformToAPIFormat(
+          result.topBuyerByValue,
+          "topBuyerByValue",
+          result.buyerShipmentCount
+        ),
+
         transformToAPIFormat(
           result.topSupplierByQuantity,
-          "topSupplierByQuantity"
+          "topSupplierByQuantity",
+          result.supplierShipmentCount
         ),
+        transformToAPIFormat(
+          result.topSupplierByValue,
+          "topSupplierByValue",
+          result.supplierShipmentCount
+        ),
+
         transformToAPIFormat(
           result.topIndianPortByQuantity,
-          "topIndianPortByQuantity"
+          "topIndianPortByQuantity",
+          result.indianPortShipmentCount
         ),
-        transformToAPIFormat(
-          result.topCountryByQuantity,
-          "topCountryByQuantity"
-        ),
-        transformToAPIFormat(result.topBuyerByValue, "topBuyerByValue"),
-        transformToAPIFormat(result.topSupplierByValue, "topSupplierByValue"),
         transformToAPIFormat(
           result.topIndianPortByValue,
-          "topIndianPortByValue"
+          "topIndianPortByValue",
+          result.indianPortShipmentCount
         ),
-        transformToAPIFormat(result.topCountryByValue, "topCountryByValue"),
+
+        transformToAPIFormat(
+          result.topCountryByQuantity,
+          "topCountryByQuantity",
+          result.countryShipmentCount
+        ),
+        transformToAPIFormat(
+          result.topCountryByValue,
+          "topCountryByValue",
+          result.countryShipmentCount
+        ),
+
+        transformToAPIFormat(
+          result.topHScodeByQuantity,
+          "topHScodeByQuantity",
+          result.HScodeShipmentCount
+        ),
+        transformToAPIFormat(
+          result.topHScodeByValue,
+          "topHScodeByValue",
+          result.HScodeShipmentCount
+        ),
       ],
       totalIndianCompanies: result.uniqueIndianCompanies.size,
       totalForeignCompanies: result.uniqueForeignCompanies.size,
@@ -329,6 +493,21 @@ const TestFilter = ({
       totalValue: result.totalValue,
       shipmentCount: arr.length,
     };
+
+    if (dataType === "cleaned data") {
+      apiResponse.data.push(
+        transformToAPIFormat(
+          result.topProductByQuantity,
+          "topProductByQuantity",
+          result.productShipmentCount
+        ),
+        transformToAPIFormat(
+          result.topProductByValue,
+          "topProductByValue",
+          result.productShipmentCount
+        )
+      );
+    }
 
     graphFilterHandler(apiResponse);
 
