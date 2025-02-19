@@ -47,6 +47,7 @@ const TestBarChart = ({ data = [], label = "Default Label" }) => {
         backgroundColor: "rgba(75, 192, 192, 0.6)",
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
+        yAxisID: "y",
       },
       {
         label: "Trendline",
@@ -57,9 +58,10 @@ const TestBarChart = ({ data = [], label = "Default Label" }) => {
         pointRadius: 3, // Show small points for clarity
         pointBackgroundColor: "red",
         fill: false,
+        yAxisID: "y1", // Assign to right-side axis
         datalabels: {
-          align: "top",
-          anchor: "end",
+          align: "end",
+          anchor: "start",
           color: "red",
           font: {
             weight: "bold",
@@ -82,6 +84,22 @@ const TestBarChart = ({ data = [], label = "Default Label" }) => {
       },
       y: {
         beginAtZero: true,
+        position: "left",
+        title: {
+          display: true,
+          text: "Bar Values",
+        },
+      },
+      y1: {
+        beginAtZero: true,
+        position: "right", // Place trendline labels on the right
+        grid: {
+          drawOnChartArea: false, // Prevent grid lines from overlapping
+        },
+        title: {
+          display: true,
+          text: "Trendline Values",
+        },
       },
     },
     plugins: {
